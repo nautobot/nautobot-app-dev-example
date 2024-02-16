@@ -1,0 +1,35 @@
+{
+    "cookiecutter": {
+        "codeowner_github_usernames": "@cmsirbu @snaselj @whitej6",
+        "full_name": "Network to Code, LLC",
+        "email": "opensource@networktocode.com",
+        "github_org": "nautobot",
+        "app_name": "nautobot_dev_example",
+        "verbose_name": "Nautobot Dev Example App",
+        "app_slug": "nautobot-dev-example",
+        "project_slug": "nautobot-app-dev-example",
+        "repo_url": "https://github.com/nautobot/nautobot-app-dev-example",
+        "base_url": "dev-example",
+        "min_nautobot_version": "2.0.0",
+        "max_nautobot_version": "2.9999",
+        "camel_name": "NautobotDevExample",
+        "project_short_description": "Nautobot App to demonstrate how to create a Nautobot App.",
+        "model_class_name": "DevExample",
+        "open_source_license": "Apache-2.0",
+        "docs_base_url": "https://docs.nautobot.com",
+        "docs_app_url": "https://docs.nautobot.com/projects/dev-example/en/latest",
+        "_drift_manager": {
+            "template": "https://github.com/nautobot/cookiecutter-nautobot-app.git",
+            "template_dir": "nautobot-app",
+            "template_ref": "develop",
+            "cookie_dir": "",
+            "branch_prefix": "drift-manager",
+            "pull_request_strategy": "create",
+            "post_actions": [
+                "black"
+            ],
+            "draft": false,
+            "baked_commit_ref": ""
+        }
+    }
+}
