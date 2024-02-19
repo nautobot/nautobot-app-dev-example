@@ -680,11 +680,48 @@ def hadolint(context):
     run_command(context, command)
 
 
-@task
-def pylint(context):
+@task(
+    help={
+        "latest": "Use the latest version of pylint-nautobot from GitHub.",
+        "local_pylint_path": "Path to a local pylint-nautobot repository to use for analysis.",
+    }
+)
+def pylint(context, latest=False, local_pylint_path=""):
     """Run pylint code analysis."""
-    command = 'pylint --init-hook "import nautobot; nautobot.setup()" --rcfile pyproject.toml nautobot_dev_example'
-    run_command(context, command)
+    command = [
+        "pylint",
+        '--init-hook="import nautobot; nautobot.setup()"',
+        "--rcfile=pyproject.toml",
+        "nautobot_dev_example",
+    ]
+
+    if not latest and not local_pylint_path:
+        run_command(context, " ".join(command))
+        return
+
+    if local_pylint_path:
+        local_pylint_path = str(Path(local_pylint_path).resolve().absolute())
+
+    command = [
+        "pip install",
+        f"-e {local_pylint_path}" if local_pylint_path else "git+https://github.com/nautobot/pylint-nautobot.git",
+        "&&",
+        *command,
+    ]
+
+    if is_truthy(context.nautobot_dev_example.local):
+        context.run(" ".join(command))
+        return
+
+    command = [
+        "run --rm --entrypoint=''",
+        f"--volume {local_pylint_path}:{local_pylint_path}" if local_pylint_path else "",
+        "-- nautobot sh -c '",
+        *command,
+        "'",
+    ]
+
+    docker_compose(context, " ".join(command))
 
 
 @task(aliases=("a",))
