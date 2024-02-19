@@ -13,19 +13,17 @@
 
 ## Overview
 
-An example Nautobot App.
+An example Nautobot app with multiple functions:
+
+- Acts as a Canary App to test enhancements to the Nautobot app [cookiecutter templates](https://github.com/nautobot/cookiecutter-nautobot-app).
+- Offers a starting point for developing new apps.
+- Illustrates how to use the Nautobot app framework.
 
 ### Screenshots
 
 More screenshots can be found in the [Using the App](https://docs.nautobot.com/projects/dev-example/en/latest/user/app_use_cases/) page in the documentation. Here's a quick overview of some of the app's added functionality:
 
 ![](https://raw.githubusercontent.com/nautobot/nautobot-app-dev-example/develop/docs/images/placeholder.png)
-
-## Try it out!
-
-This App is installed in the Nautobot Community Sandbox found over at [demo.nautobot.com](https://demo.nautobot.com/)!
-
-> For a full list of all the available always-on sandbox environments, head over to the main page on [networktocode.com](https://www.networktocode.com/nautobot/sandbox-environments/).
 
 ## Documentation
 
