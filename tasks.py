@@ -519,9 +519,11 @@ def import_db(context, db_name="", input_file="dump.sql"):
             '--execute="',
             f"DROP DATABASE IF EXISTS {db_name};",
             f"CREATE DATABASE {db_name};",
-            ""
-            if db_name == "$MYSQL_DATABASE"
-            else f"GRANT ALL PRIVILEGES ON {db_name}.* TO $MYSQL_USER; FLUSH PRIVILEGES;",
+            (
+                ""
+                if db_name == "$MYSQL_DATABASE"
+                else f"GRANT ALL PRIVILEGES ON {db_name}.* TO $MYSQL_USER; FLUSH PRIVILEGES;"
+            ),
             '"',
             "&&",
             "mysql",
@@ -689,25 +691,30 @@ def pylint(context):
 def autoformat(context):
     """Run code autoformatting."""
     black(context, autoformat=True)
-    ruff(context, action="both", fix=True)
+    ruff(context, action=["lint"], fix=True)
 
 
 @task(
     help={
-        "action": "One of 'lint', 'format', or 'both'",
-        "fix": "Automatically fix selected action. May not be able to fix all.",
-        "output_format": "see https://docs.astral.sh/ruff/settings/#output-format",
+        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `['lint']`)",
+        "fix": "Automatically fix selected actions. May not be able to fix all issues found. (default: False)",
+        "output_format": "See https://docs.astral.sh/ruff/settings/#output-format for details. (default: `full`)",
     },
+    iterable=["action"],
 )
-def ruff(context, action="lint", fix=False, output_format="text"):
+def ruff(context, action=["lint"], fix=False, output_format="full"):
     """Run ruff to perform code formatting and/or linting."""
-    if action != "lint":
+    if not action:
+        action = ["lint"]
+
+    if "format" in action:
         command = "ruff format"
         if not fix:
             command += " --check"
         command += " ."
         run_command(context, command)
-    if action != "format":
+
+    if "lint" in action:
         command = "ruff check"
         if fix:
             command += " --fix"

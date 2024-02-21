@@ -2,9 +2,6 @@
 
 Here you will find detailed instructions on how to **install** and **configure** the App within your Nautobot environment.
 
-!!! warning "Developer Note - Remove Me!"
-    Detailed instructions on installing the App. You will need to update this section based on any additional dependencies or prerequisites.
-
 ## Prerequisites
 
 - The app is compatible with Nautobot 2.0.0 and higher.
@@ -14,9 +11,6 @@ Here you will find detailed instructions on how to **install** and **configure**
     Please check the [dedicated page](compatibility_matrix.md) for a full compatibility matrix and the deprecation policy.
 
 ### Access Requirements
-
-!!! warning "Developer Note - Remove Me!"
-    What external systems (if any) it needs access to in order to work.
 
 ## Install Guide
 
@@ -68,9 +62,6 @@ sudo systemctl restart nautobot nautobot-worker nautobot-scheduler
 ```
 
 ## App Configuration
-
-!!! warning "Developer Note - Remove Me!"
-    Any configuration required to get the App set up. Edit the table below as per the examples provided.
 
 The app behavior can be controlled with the following list of settings:
 
