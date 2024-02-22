@@ -467,7 +467,7 @@ To run an individual test, you can run any or all of the following:
 ➜ invoke bandit
 ➜ invoke black
 ➜ invoke flake8
-➜ invoke ruff
+➜ invoke ruff-check
 ➜ invoke pylint
 ```
 
