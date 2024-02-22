@@ -97,7 +97,7 @@ def task(function=None, *args, **kwargs):
             task_func = invoke_task(*args, **kwargs)(function)
         else:
             task_func = invoke_task(function)
-        namespace.add_task(task_func)
+        namespace.add_task(task_func)  # type: ignore
         return task_func
 
     if function:
@@ -691,35 +691,32 @@ def pylint(context):
 def autoformat(context):
     """Run code autoformatting."""
     black(context, autoformat=True)
-    ruff(context, action=["lint"], fix=True)
+    ruff_check(context, fix=True)
 
 
 @task(
     help={
-        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `['lint']`)",
         "fix": "Automatically fix selected actions. May not be able to fix all issues found. (default: False)",
         "output_format": "See https://docs.astral.sh/ruff/settings/#output-format for details. (default: `full`)",
     },
-    iterable=["action"],
 )
-def ruff(context, action=["lint"], fix=False, output_format="full"):
-    """Run ruff to perform code formatting and/or linting."""
-    if not action:
-        action = ["lint"]
+def ruff_check(context, fix=False, output_format="full"):
+    """Run ruff check to perform linting."""
+    command = "ruff check"
+    if fix:
+        command += " --fix"
+    command += f" --output-format {output_format} ."
+    run_command(context, command)
 
-    if "format" in action:
-        command = "ruff format"
-        if not fix:
-            command += " --check"
-        command += " ."
-        run_command(context, command)
 
-    if "lint" in action:
-        command = "ruff check"
-        if fix:
-            command += " --fix"
-        command += f" --output-format {output_format} ."
-        run_command(context, command)
+@task(help={"fix": "Automatically reformat the code. (default: False)"})
+def ruff_format(context, fix=False):
+    """Run ruff to perform code formatting."""
+    command = "ruff format"
+    if not fix:
+        command += " --check"
+    command += " ."
+    run_command(context, command)
 
 
 @task
@@ -808,8 +805,8 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     # Sorted loosely from fastest to slowest
     print("Running black...")
     black(context)
-    print("Running ruff...")
-    ruff(context)
+    print("Running ruff check...")
+    ruff_check(context)
     print("Running flake8...")
     flake8(context)
     print("Running bandit...")
