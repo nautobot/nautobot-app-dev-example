@@ -1,8 +1,8 @@
 # Nautobot Dev Example App
 
-This application serves as a testbed for evaluating improvements to the [Nautobot app cookiecutter templates](https://github.com/nautobot/cookiecutter-nautobot-app). It is not intended to be used directly in production environments.
+This application serves as a testbed for evaluating improvements to the [Nautobot App Cookiecutter Templates](https://github.com/nautobot/cookiecutter-nautobot-app). **DO NOT USE** this repository directly in production environments or to bootstrap a new app!
 
-For those initiating a new Nautobot app, utilize the [cookiecutter template](https://github.com/nautobot/cookiecutter-nautobot-app) as a starting point.
+For those wanting to develop a new Nautobot app, please use the [cookiecutter template](https://github.com/nautobot/cookiecutter-nautobot-app) as a starting point.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/nautobot/nautobot-app-dev-example/develop/docs/images/icon-nautobot-dev-example.png" class="logo" height="200px">
