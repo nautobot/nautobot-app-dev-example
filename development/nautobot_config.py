@@ -131,9 +131,9 @@ PLUGINS = ["nautobot_dev_example"]
 
 # Apps configuration settings. These settings are used by various Apps that the user may have installed.
 # Each key in the dictionary is the name of an installed App and its value is a dictionary of settings.
-# PLUGINS_CONFIG = {
-#     'nautobot_dev_example': {
-#         'foo': 'bar',
-#         'buzz': 'bazz'
-#     }
-# }
+PLUGINS_CONFIG = {
+    'nautobot_dev_example': {
+        'foo': 'bar',
+        'bar': 'bazz'
+    }
+}

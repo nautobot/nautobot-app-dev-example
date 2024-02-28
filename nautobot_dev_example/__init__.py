@@ -17,10 +17,12 @@ class NautobotDevExampleConfig(NautobotAppConfig):
     author = "Network to Code, LLC"
     description = "Nautobot App to demonstrate how to create a Nautobot App.."
     base_url = "dev-example"
-    required_settings = []
+    required_settings = ["foo"]
     min_version = "2.0.0"
     max_version = "2.9999"
-    default_settings = {}
+    default_settings = {
+        "bar": "baz",
+    }
     caching_config = {}
 
 
