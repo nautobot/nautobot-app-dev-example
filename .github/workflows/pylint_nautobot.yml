@@ -10,6 +10,7 @@ on:  # yamllint disable-line rule:truthy rule:comments
 env:
   APP_NAME: "nautobot-app-dev-example"
 
+# Is the use of `failure()` correct?
 jobs:
   latest-pylint-nautobot:
     runs-on: "ubuntu-22.04"
@@ -49,10 +50,9 @@ jobs:
         # TBD: Replace with `develop` branch before merging
         run: "poetry run invoke pylint --ref=u/snaselj-fix-deps"
   slack-notify:
-    needs:
-      - "latest-pylint-nautobot"
+    needs: "latest-pylint-nautobot"
     if: |
-      needs.latest-pylint-nautobot.result == 'failure'
+      failure()
     runs-on: "ubuntu-22.04"
     env:
       SLACK_WEBHOOK_URL: "${{ secrets.SLACK_WEBHOOK_URL }}"
