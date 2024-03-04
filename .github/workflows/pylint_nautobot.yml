@@ -20,4 +20,4 @@ jobs:
         uses: "networktocode/gh-action-setup-poetry-environment@v6"
       - name: "Run latest pylint-nautobot"
         # TBD: Fix ref to `develop` branch
-        run: "poetry run invoke pylint ref=u/snaselj-fix-deps"
+        run: "poetry run invoke pylint --ref=u/snaselj-fix-deps"
