@@ -688,7 +688,6 @@ def hadolint(context):
 )
 def pylint(context, ref=""):
     """Run pylint code analysis."""
-
     pylint_command = [
         "pylint",
         '--init-hook="import nautobot; nautobot.setup()"',
