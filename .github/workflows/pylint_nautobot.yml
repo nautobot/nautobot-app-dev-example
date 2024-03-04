@@ -18,7 +18,6 @@ jobs:
         uses: "actions/checkout@v4"
       - name: "Setup environment"
         uses: "networktocode/gh-action-setup-poetry-environment@v6"
-      - name: "Linting: black"
+      - name: "Run latest pylint-nautobot"
         # TBD: Fix ref to `develop` branch
         run: "poetry run invoke pylint ref=u/snaselj-fix-deps"
-
