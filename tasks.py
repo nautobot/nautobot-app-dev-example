@@ -682,46 +682,52 @@ def hadolint(context):
 
 @task(
     help={
-        "latest": "Use the latest version of pylint-nautobot from GitHub.",
-        "local_pylint_path": "Path to a local pylint-nautobot repository to use for analysis.",
+        "ref": "`pylint-nautobot` git reference to use for the analysis, can be a local path to the repository"
+        ", or a git reference e.g. `--ref=develop`. Use currently installed version if empty. (default: Empty)",
     }
 )
-def pylint(context, latest=False, local_pylint_path=""):
+def pylint(context, ref=""):
     """Run pylint code analysis."""
-    command = [
+
+    pylint_command = [
         "pylint",
         '--init-hook="import nautobot; nautobot.setup()"',
         "--rcfile=pyproject.toml",
         "nautobot_dev_example",
     ]
 
-    if not latest and not local_pylint_path:
-        run_command(context, " ".join(command))
+    if not ref:
+        run_command(context, " ".join(pylint_command))
         return
 
-    if local_pylint_path:
-        local_pylint_path = str(Path(local_pylint_path).resolve().absolute())
+    pip_and_pylint_command = ["pip install"]
 
-    command = [
-        "pip install",
-        f"-e {local_pylint_path}" if local_pylint_path else "git+https://github.com/nautobot/pylint-nautobot.git",
+    local_pylint_nautobot_path = Path(ref).resolve().absolute()
+    if local_pylint_nautobot_path.is_dir() and (local_pylint_nautobot_path / "pyproject.toml").is_file():
+        pip_and_pylint_command.append(f"-e {local_pylint_nautobot_path}")
+    else:
+        local_pylint_nautobot_path = None
+        pip_and_pylint_command.append(f"git+https://github.com/nautobot/pylint-nautobot.git@{ref}")
+
+    pip_and_pylint_command += [
         "&&",
-        *command,
+        *pylint_command,
     ]
 
     if is_truthy(context.nautobot_dev_example.local):
-        context.run(" ".join(command))
+        context.run(" ".join(pip_and_pylint_command))
         return
 
-    command = [
+    docker_run_command = [
         "run --rm --entrypoint=''",
-        f"--volume {local_pylint_path}:{local_pylint_path}" if local_pylint_path else "",
+        f"--volume {local_pylint_nautobot_path}:{local_pylint_nautobot_path}" if local_pylint_nautobot_path else "",
         "-- nautobot sh -c '",
-        *command,
+        *pip_and_pylint_command,
         "'",
     ]
 
-    docker_compose(context, " ".join(command))
+    # Do not use `run_command()` to avoid poluting the running container with the installed package
+    docker_compose(context, " ".join(docker_run_command))
 
 
 @task(aliases=("a",))
