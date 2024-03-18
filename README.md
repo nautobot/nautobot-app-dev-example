@@ -12,7 +12,7 @@ For those wanting to develop a new Nautobot app, please use the [cookiecutter te
   <a href="https://pypi.org/project/nautobot-dev-example/"><img src="https://img.shields.io/pypi/v/nautobot-dev-example"></a>
   <a href="https://pypi.org/project/nautobot-dev-example/"><img src="https://img.shields.io/pypi/dm/nautobot-dev-example"></a>
   <br>
-  An <a href="https://www.networktocode.com/nautobot/apps/">App</a> for <a href="https://nautobot.com/">Nautobot</a>.
+  An <a href="https://networktocode.com/nautobot-apps/">App</a> for <a href="https://nautobot.com/">Nautobot</a>.
 </p>
 
 ## Overview
