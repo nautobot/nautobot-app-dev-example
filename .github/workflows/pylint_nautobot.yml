@@ -4,13 +4,10 @@ name: "Latest pylint-nautobot"
 on:  # yamllint disable-line rule:truthy rule:comments
   schedule:
     - cron: "0 3 */2 * *"  # every other day at 3am
-  # TBD: Remove running on push
-  push: ~
 
 env:
   APP_NAME: "nautobot-app-dev-example"
 
-# Is the use of `failure()` correct?
 jobs:
   latest-pylint-nautobot:
     runs-on: "ubuntu-22.04"
