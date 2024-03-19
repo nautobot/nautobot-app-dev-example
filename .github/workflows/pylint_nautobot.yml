@@ -47,5 +47,4 @@ jobs:
       - name: "Copy credentials"
         run: "cp development/creds.example.env development/creds.env"
       - name: "Linting: pylint"
-        # TBD: Replace with `develop` branch before merging
-        run: "poetry run invoke pylint --ref=u/snaselj-fix-deps"
+        run: "poetry run invoke pylint --ref=develop"
