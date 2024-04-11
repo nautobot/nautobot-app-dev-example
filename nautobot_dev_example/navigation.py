@@ -2,6 +2,7 @@
 
 from nautobot.apps.ui import NavMenuAddButton, NavMenuGroup, NavMenuItem, NavMenuTab
 
+
 items = (
     NavMenuItem(
         link="plugins:nautobot_dev_example:devexample_list",

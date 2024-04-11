@@ -1,6 +1,6 @@
 """Filtering for nautobot_dev_example."""
 
-from nautobot.apps.filters import NameSearchFilterSet, NautobotFilterSet
+from nautobot.apps.filters import NautobotFilterSet, NameSearchFilterSet
 
 from nautobot_dev_example import models
 

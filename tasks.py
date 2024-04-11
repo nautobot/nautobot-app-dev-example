@@ -649,6 +649,28 @@ def generate_release_notes(context, version=""):
 # ------------------------------------------------------------------------------
 # TESTS
 # ------------------------------------------------------------------------------
+@task(
+    help={
+        "autoformat": "Apply formatting recommendations automatically, rather than failing if formatting is incorrect.",
+    }
+)
+def black(context, autoformat=False):
+    """Check Python code style with Black."""
+    if autoformat:
+        black_command = "black"
+    else:
+        black_command = "black --check --diff"
+
+    command = f"{black_command} ."
+
+    run_command(context, command)
+
+
+@task
+def flake8(context):
+    """Check for PEP8 compliance and other style issues."""
+    command = "flake8 . --config .flake8"
+    run_command(context, command)
 
 
 @task
@@ -668,6 +690,7 @@ def pylint(context):
 @task(aliases=("a",))
 def autoformat(context):
     """Run code autoformatting."""
+    black(context, autoformat=True)
     ruff(context, fix=True)
 
 
@@ -735,7 +758,7 @@ def check_migrations(context):
         "verbose": "Enable verbose test output.",
     }
 )
-def unittest(  # noqa: PLR0913
+def unittest(
     context,
     keepdb=False,
     label="nautobot_dev_example",
@@ -783,8 +806,12 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
         print("Starting Docker Containers...")
         start(context)
     # Sorted loosely from fastest to slowest
+    print("Running black...")
+    black(context)
     print("Running ruff...")
     ruff(context)
+    print("Running flake8...")
+    flake8(context)
     print("Running bandit...")
     bandit(context)
     print("Running yamllint...")
