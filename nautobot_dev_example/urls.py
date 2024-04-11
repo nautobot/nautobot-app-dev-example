@@ -4,7 +4,6 @@ from nautobot.apps.urls import NautobotUIViewSetRouter
 
 from nautobot_dev_example import views
 
-
 router = NautobotUIViewSetRouter()
 router.register("devexample", views.DevExampleUIViewSet)
 
