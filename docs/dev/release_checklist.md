@@ -20,7 +20,7 @@ Every minor version release should refresh `poetry.lock`, so that it lists the m
 Commit any resulting changes from the following sections to the documentation before proceeding with the release.
 
 !!! tip
-    Fire up the documentation server in your development environment with `poetry run mkdocs serve`! This allows you to view the documentation site locally and automatically rebuilds it as you make changes.
+    Fire up the documentation server in your development environment with `poetry run mkdocs serve`! This allows you to view the documentation site locally (the link is in the output of the command) and automatically rebuilds it as you make changes.
 
 #### Link to the Release Notes Page
 
@@ -124,8 +124,8 @@ For example, if you just released `v1.4.2`:
 ```no-highlight
 > git switch -c release-1.4.2-to-develop main
 
-> poetry version patch
-Bumping version from 1.4.2 to 1.4.3
+> poetry version prepatch
+Bumping version from 1.4.2 to 1.4.3a1
 ```
 
 !!! important
