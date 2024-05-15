@@ -96,7 +96,7 @@ Check the git diff to verify the changes are correct (`git diff --cached`).
 
 Commit and push the staged changes.
 
-### Submit Pull Requests
+### Submit Release Pull Request
 
 Submit a pull request to merge your release branch into `develop`. Once merged, submit another pull request titled `**"Release vX.Y.Z"**` to merge the `develop` branch into `main`. Copy the documented release notes into the pull request's body.
 
@@ -105,7 +105,7 @@ Once CI has completed on the PR, merge it.
 !!! important
     Do not squash merge this branch into `main`. Make sure to select `Create a merge commit` when merging in GitHub.
 
-### Create a New Release
+### Create a New Release in GitHub
 
 Draft a [new release](https://github.com/nautobot/nautobot-app-dev-example/releases/new) with the following parameters.
 
@@ -113,20 +113,23 @@ Draft a [new release](https://github.com/nautobot/nautobot-app-dev-example/relea
 * **Target:** `main`
 * **Title:** Version and date (e.g. `v1.4.2 - 2024-04-02`)
 
-Copy the description from the pull request to the release.
+Click "Generate Release Notes" and keep the `Full Changelog` section (delete everything else). Copy the description from the pull request to the release.
 
-### Bump the Development Version
+### Create a PR from `main` back to `develop`
 
-Create a new branch from `main` called `release-1.4.2-to-develop` and use `poetry version patch` to bump the version to the next release.
+Create a new branch from `main` called `release-1.4.2-to-develop` and use `poetry version prepatch` to bump the development version to the next release.
 
 For example, if you just released `v1.4.2`:
 
 ```no-highlight
 > git switch -c release-1.4.2-to-develop main
+Switched to a new branch 'release-1.4.2-to-develop'
 
 > poetry version prepatch
 Bumping version from 1.4.2 to 1.4.3a1
 ```
+
+Open a new PR from `release-1.4.2-to-develop` against `develop`, wait for CI to pass, and merge it.
 
 !!! important
     Do not squash merge this branch into `develop`. Make sure to select `Create a merge commit` when merging in GitHub.
