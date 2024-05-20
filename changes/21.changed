@@ -1,0 +1,2 @@
+Updated steps to create releases.
+Changed CI changelog step to ignore branch names starting with "release".
