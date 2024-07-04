@@ -22,10 +22,6 @@ Commit any resulting changes from the following sections to the documentation be
 !!! tip
     Fire up the documentation server in your development environment with `poetry run mkdocs serve`! This allows you to view the documentation site locally (the link is in the output of the command) and automatically rebuilds it as you make changes.
 
-#### Link to the Release Notes Page
-
-A new minor version requires the creation of a new release notes page in the documentation (e.g. `docs/admin/release_notes/version_X.Y.md`). Add this new page to the table of contents within `mkdocs.yml`.
-
 ### Verify the Installation and Upgrade Steps
 
 Follow the [installation instructions](../admin/install.md) to perform a new production installation of the app. If possible, also test the [upgrade process](../admin/upgrade.md) from the previous released version.
@@ -90,17 +86,26 @@ Please see the [official Poetry documentation on `version`](https://python-poetr
 
 This example uses 1.4.2, but change the version number to match the version you bumped to in the previous step. First, create a release branch off of `develop` (`git switch -c release-1.4.2 develop`).
 
-Generate release notes with `invoke generate-release-notes --version 1.4.2` and answer `yes` to the prompt `Is it okay if I remove those files? [Y/n]:`. This will update the release notes in `docs/admin/release_notes/version_1.4.md`, stage that file in git, and `git rm` all the fragments that have now been incorporated into the release notes.
+> You will need to have the project's poetry environment built at this stage, as the towncrier command runs **locally only**. If you don't have it, run `poetry install` first.
 
-Check the git diff to verify the changes are correct (`git diff --cached`).
+Generate release notes with `invoke generate-release-notes --version 1.4.2` and answer `yes` to the prompt `Is it okay if I remove those files? [Y/n]:`. This will update the release notes in `docs/admin/release_notes/version_X.Y.md`, stage that file in git, and `git rm` all the fragments that have now been incorporated into the release notes.
 
-Commit and push the staged changes.
+There are two possibilities:
+
+1. If you're releasing a new major or minor version, rename the `version_X.Y.md` file accordingly (e.g. rename to `docs/admin/release_notes/version_1.4.md`). Check its title and add this new page to the table of contents within `mkdocs.yml`.
+2. If you're releasing a patch version, copy the contents of the `version_X.Y.md` file into the already existing `docs/admin/release_notes/version_1.4.md` file.
+
+Check the `git diff` to verify the changes are correct (`git diff --cached`). Remember to also stage `git add pyproject.toml`.
+
+Commit `git commit -m "Create release v1.4.2"` and push the staged changes.
 
 ### Submit Release Pull Request
 
-Submit a pull request to merge your release branch into `develop`. Once merged, submit another pull request titled `**"Release vX.Y.Z"**` to merge the `develop` branch into `main`. Copy the documented release notes into the pull request's body.
+Submit a pull request titled `**"Release vX.Y.Z"**` to merge your release branch into `develop`.
 
 Once CI has completed on the PR, merge it.
+
+Once merged into `develop`, submit another pull request with the same title to merge `develop` into `main`. Copy the documented release notes into the pull request's body.
 
 !!! important
     Do not squash merge this branch into `main`. Make sure to select `Create a merge commit` when merging in GitHub.
@@ -109,11 +114,13 @@ Once CI has completed on the PR, merge it.
 
 Draft a [new release](https://github.com/nautobot/nautobot-app-dev-example/releases/new) with the following parameters.
 
-* **Tag:** Current version (e.g. `v1.4.2`)
+* **Tag:** Input current version (e.g. `v1.4.2`) and select `Create new tag: v1.4.2 on publish`
 * **Target:** `main`
 * **Title:** Version and date (e.g. `v1.4.2 - 2024-04-02`)
 
-Click "Generate Release Notes" and keep the `Full Changelog` section (delete everything else). Copy the description from the pull request to the release.
+Click "Generate Release Notes" and replace the content of the `What's Changed` section with the description of changes from the pull request to the release.
+
+Publish the release!
 
 ### Create a PR from `main` back to `develop`
 
@@ -127,6 +134,8 @@ Switched to a new branch 'release-1.4.2-to-develop'
 
 > poetry version prepatch
 Bumping version from 1.4.2 to 1.4.3a1
+
+> git commit -m "Bump version"
 ```
 
 Open a new PR from `release-1.4.2-to-develop` against `develop`, wait for CI to pass, and merge it.
