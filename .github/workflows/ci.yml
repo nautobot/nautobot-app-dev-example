@@ -191,7 +191,7 @@ jobs:
           echo "${{ fromJson('["develop","ltm-1.6"]') }}"
           echo "${{ contains(fromJson('["develop","ltm-1.6"]') }}"
           echo "${{ startsWith(github.head_ref, 'release') }}"
-          echo "${{ contains(fromJson('["develop","ltm-1.6"]'), github.base_ref) && (github.head_ref != 'main' || !startsWith(github.head_ref, 'release')) }}"
+          echo "${{ contains(fromJson('[\"develop","ltm-1.6\"]'), github.base_ref) && (github.head_ref != 'main' || !startsWith(github.head_ref, 'release')) }}"
       - name: "Check out repository code"
         uses: "actions/checkout@v4"
         with:
