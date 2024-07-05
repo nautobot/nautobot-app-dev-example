@@ -182,7 +182,7 @@ jobs:
   debug_refs:
     runs-on: "ubuntu-22.04"
     steps:
-      - name: debug
+      - name: "Debug github refs"
         run: |
           echo ref ${{ github.ref }}
           echo head_ref ${{ github.head_ref }}
