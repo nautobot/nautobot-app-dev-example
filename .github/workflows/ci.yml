@@ -190,13 +190,13 @@ jobs:
           echo ${{ github.head_ref != 'main' }}
           echo ${{ !startsWith(github.head_ref, 'release') }}
           echo ${{ contains(fromJson('["develop","ltm-1.6"]'), github.base_ref) && (github.head_ref != 'main' || !startsWith(github.head_ref, 'release')) }}
-      - name: "Check out repository code"
   changelog:
     if: >
       contains(fromJson('["develop","ltm-1.6"]'), github.base_ref) &&
       (github.head_ref != 'main') && (!startsWith(github.head_ref, 'release'))
     runs-on: "ubuntu-22.04"
     steps:
+      - name: "Check out repository code"
         uses: "actions/checkout@v4"
         with:
           fetch-depth: "0"
