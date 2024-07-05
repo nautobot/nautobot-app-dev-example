@@ -180,6 +180,7 @@ jobs:
 
   # TODO: REMOVE ONCE ALL CASES ARE TESTED
   debug_refs:
+    runs-on: "ubuntu-22.04"
     steps:
       - name: debug
         run: |
