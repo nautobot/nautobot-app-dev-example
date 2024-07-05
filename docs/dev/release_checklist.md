@@ -103,7 +103,7 @@ Commit `git commit -m "Create release v1.4.2"` and push the staged changes.
 
 ### Submit Release Pull Request
 
-Submit a pull request titled `Release vX.Y.Z` to merge your release branch into `develop`.
+Submit a pull request titled `Release v1.4.2` to merge your release branch into `develop`.
 
 Once CI has completed on the PR, merge it.
 
