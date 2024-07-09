@@ -5,6 +5,11 @@ This document is intended for app maintainers and covers the steps to perform wh
 !!! important
     Before starting, make sure your **local** `develop`, `main`, and (if applicable) the current LTM branch are all up to date with upstream!
 
+    ```
+    git fetch
+    git switch develop && git pull # and repeat for main/ltm
+    ```
+
 ## Minor Version Bumps
 
 ### Update Requirements
@@ -150,7 +155,9 @@ Publish the release!
 
 ### Create a PR from `main` back to `develop`
 
-Create a new branch from `main` called `release-1.4.2-to-develop` and use `poetry version prepatch` to bump the development version to the next release. Don't forget to sync your local `main` branch with the upstream changes!
+First, sync your `main` branch with upstream changes: `git switch main && git pull`.
+
+Create a new branch from `main` called `release-1.4.2-to-develop` and use `poetry version prepatch` to bump the development version to the next release.
 
 For example, if you just released `v1.4.2`:
 
