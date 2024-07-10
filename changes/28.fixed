@@ -1,4 +1,0 @@
-Fixed CI token for GH releases.
-Updated towncrier template to include the appropriate preamble.
-Updated release checklist post-testing.
-Ensured towncrier runs locally only when started via invoke.
