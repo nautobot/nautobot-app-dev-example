@@ -8,7 +8,7 @@ For those wanting to develop a new Nautobot app, please use the [cookiecutter te
   <img src="https://raw.githubusercontent.com/nautobot/nautobot-app-dev-example/develop/docs/images/icon-nautobot-dev-example.png" class="logo" height="200px">
   <br>
   <a href="https://github.com/nautobot/nautobot-app-dev-example/actions"><img src="https://github.com/nautobot/nautobot-app-dev-example/actions/workflows/ci.yml/badge.svg?branch=main"></a>
-  <a href="https://docs.nautobot.com/projects/dev-example/en/latest/"><img src="https://readthedocs.org/projects/nautobot-plugin-dev-example/badge/"></a>
+  <a href="https://docs.nautobot.com/projects/dev-example/en/latest/"><img src="https://readthedocs.org/projects/nautobot-app-dev-example/badge/"></a>
   <a href="https://pypi.org/project/nautobot-dev-example/"><img src="https://img.shields.io/pypi/v/nautobot-dev-example"></a>
   <a href="https://pypi.org/project/nautobot-dev-example/"><img src="https://img.shields.io/pypi/dm/nautobot-dev-example"></a>
   <br>

@@ -10,6 +10,12 @@ This document is intended for app maintainers and covers the steps to perform wh
     git switch develop && git pull # and repeat for main/ltm
     ```
 
+Choose your own adventure:
+
+- LTM release? Jump [here](#ltm-releases).
+- Patch release from `develop`? Jump [here](#all-releases-from-develop).
+- Minor release? Continue with [Minor Version Bumps](#minor-version-bumps) and then [All Releases from `develop`](#all-releases-from-develop).
+
 ## Minor Version Bumps
 
 ### Update Requirements
@@ -38,7 +44,7 @@ The goal of this step is to walk through the entire install process *as document
 
 ---
 
-## All Releases
+## All Releases from `develop`
 
 ### Verify CI Build Status
 
@@ -105,18 +111,18 @@ There are two possibilities:
 1. If you're releasing a new major or minor version, rename the `version_X.Y.md` file accordingly (e.g. rename to `docs/admin/release_notes/version_1.4.md`). Update the `Release Overview` and add this new page to the table of contents within `mkdocs.yml`.
 2. If you're releasing a patch version, copy your version's section from the `version_X.Y.md` file into the already existing `docs/admin/release_notes/version_1.4.md` file. Delete the `version_X.Y.md` file.
 
-Check the `git diff` to verify the changes are correct (`git diff --cached`). Remember to also run `git add pyproject.toml` to stage the version bump.
+Stage all the changes (`git add`) and check the diffs to verify all of the changes are correct (`git diff --cached`).
 
-Commit `git commit -m "Create release v1.4.2"` and push the staged changes.
+Commit `git commit -m "Release v1.4.2"` and `git push` the staged changes.
 
 ### Submit Release Pull Request
 
 Submit a pull request titled `Release v1.4.2` to merge your release branch into `main`. Copy the documented release notes into the pull request's body.
 
-Once CI has completed on the PR, merge it.
-
 !!! important
     Do not squash merge this branch into `main`. Make sure to select `Create a merge commit` when merging in GitHub.
+
+Once CI has completed on the PR, merge it.
 
 ### Create a New Release in GitHub
 
@@ -132,7 +138,7 @@ Click "Generate Release Notes" and edit the auto-generated content as follows:
     - This should give you the list for the new `Contributors` section.
     - Make sure there are no duplicated entries.
 - Replace the content of the `What's Changed` section with the description of changes from the release PR (what towncrier generated).
-- Leave the `New Contributors` list as it is.
+- If it exists, leave the `New Contributors` list as it is.
 
 The release notes should look as follows:
 
@@ -168,10 +174,37 @@ Switched to a new branch 'release-1.4.2-to-develop'
 > poetry version prepatch
 Bumping version from 1.4.2 to 1.4.3a1
 
-> git commit -m "Bump version"
-```
+> git add pyproject.toml && git commit -m "Bump version"
 
-Open a new PR from `release-1.4.2-to-develop` against `develop`, wait for CI to pass, and merge it.
+> git push
+```
 
 !!! important
     Do not squash merge this branch into `develop`. Make sure to select `Create a merge commit` when merging in GitHub.
+
+Open a new PR from `release-1.4.2-to-develop` against `develop`, wait for CI to pass, and merge it.
+
+### Final checks
+
+At this stage, the CI should be running or finished for the `v1.4.2` tag and a package successfully published to PyPI and added into the GitHub Release. Double check that's the case.
+
+Documentation should also have been built for the tag on ReadTheDocs and if you're reading this page online, refresh it and look for the new version in the little version fly-out menu down at the bottom right of the page.
+
+All done!
+
+
+## LTM Releases
+
+For projects maintaining a Nautobot LTM compatible release, all development and release management is done through the `ltm-x.y` branch. The `x.y` relates to the LTM version of Nautobot it's compatible with, for example `1.6`.
+
+The process is similar to releasing from `develop`, but with fewer steps:
+
+1. Make sure your `ltm-1.6` branch is passing CI.
+2. Bump up the patch version `poetry version patch`. If you're backporting a feature instead of bugfixes, bump the minor version instead with `poetry version minor`.
+3. Create a release branch from the `ltm-1.6` branch: `git switch -c release-1.2.3 ltm-1.6`.
+4. Generate the release notes: `invoke generate-release-notes --version 1.2.3`.
+5. Move the release notes from the generated `docs/admin/release_notes/version_X.Y.md` to `docs/admin/release_notes/version_1.2.md`.
+6. Add all the changes and `git commit -m "Release v1.4.2"`, then `git push`.
+7. Open a new PR against `ltm-1.6`. Once CI is passing in the PR, `Create a merge commit` (don't squash!).
+8. Create a New Release in GitHub - use the same steps documented [here](#create-a-new-release-in-github).
+9. Open a separate PR against `develop` to synchronize all LTM release changelogs into the latest version of the docs for visibility.
