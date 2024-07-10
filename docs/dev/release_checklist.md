@@ -204,7 +204,7 @@ The process is similar to releasing from `develop`, but with fewer steps:
 3. Create a release branch from the `ltm-1.6` branch: `git switch -c release-1.2.3 ltm-1.6`.
 4. Generate the release notes: `invoke generate-release-notes --version 1.2.3`.
 5. Move the release notes from the generated `docs/admin/release_notes/version_X.Y.md` to `docs/admin/release_notes/version_1.2.md`.
-6. Add all the changes and `git commit -m "Release v1.4.2"`, then `git push`.
+6. Add all the changes and `git commit -m "Release v1.2.3"`, then `git push`.
 7. Open a new PR against `ltm-1.6`. Once CI is passing in the PR, `Create a merge commit` (don't squash!).
 8. Create a New Release in GitHub - use the same steps documented [here](#create-a-new-release-in-github).
 9. Open a separate PR against `develop` to synchronize all LTM release changelogs into the latest version of the docs for visibility.
