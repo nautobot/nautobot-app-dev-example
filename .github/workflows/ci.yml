@@ -177,10 +177,24 @@ jobs:
         if: "matrix.db-backend == 'mysql'"
       - name: "Run Tests"
         run: "poetry run invoke unittest"
+
+  # TODO: REMOVE ONCE ALL CASES ARE TESTED
+  debug_refs:
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Debug github refs"
+        run: |
+          echo ref ${{ github.ref }}
+          echo head_ref ${{ github.head_ref }}
+          echo base_ref ${{ github.base_ref }}
+          echo ${{ contains(fromJson('["develop","ltm-1.6"]'), github.base_ref) }}
+          echo ${{ github.head_ref != 'main' }}
+          echo ${{ !startsWith(github.head_ref, 'release') }}
+          echo ${{ contains(fromJson('["develop","ltm-1.6"]'), github.base_ref) && (github.head_ref != 'main' || !startsWith(github.head_ref, 'release')) }}
   changelog:
     if: >
       contains(fromJson('["develop","ltm-1.6"]'), github.base_ref) &&
-      (github.head_ref != 'main') && !contains(github.head_ref, 'release')
+      (github.head_ref != 'main') && (!startsWith(github.head_ref, 'release'))
     runs-on: "ubuntu-22.04"
     steps:
       - name: "Check out repository code"
@@ -223,7 +237,7 @@ jobs:
       - name: "Upload binaries to release"
         uses: "svenstaro/upload-release-action@v2"
         with:
-          repo_token: "${{ secrets.NTC_GITHUB_TOKEN }}"  # use GH_NAUTOBOT_BOT_TOKEN for Nautobot Org repos.
+          repo_token: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"  # use GH_NAUTOBOT_BOT_TOKEN for Nautobot Org repos.
           file: "dist/*"
           tag: "${{ github.ref }}"
           overwrite: true
