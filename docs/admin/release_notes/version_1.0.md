@@ -8,6 +8,15 @@ This document describes all new features and changes in the release `1.0`. The f
 - Achieved in this `x.y` release
 - Changes to compatibility with Nautobot and/or other apps, libraries etc.
 
+## [v1.0.1 (2024-07-10)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v1.0.1)
+
+### Fixed
+
+- [#28](https://github.com/nautobot/nautobot-app-dev-example/issues/28) - Fixed CI token for GH releases.
+- [#28](https://github.com/nautobot/nautobot-app-dev-example/issues/28) - Updated towncrier template to include the appropriate preamble.
+- [#28](https://github.com/nautobot/nautobot-app-dev-example/issues/28) - Updated release checklist post-testing.
+- [#28](https://github.com/nautobot/nautobot-app-dev-example/issues/28) - Ensured towncrier runs locally only when started via invoke.
+
 ## [v1.0.0 (2024-07-04)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v1.0.0)
 
 ### Changed
