@@ -1,7 +1,12 @@
 """Forms for nautobot_dev_example."""
 
 from django import forms
-from nautobot.apps.forms import NautobotBulkEditForm, NautobotFilterForm, NautobotModelForm, TagsBulkEditFormMixin
+from nautobot.apps.forms import (
+    NautobotBulkEditForm,
+    NautobotFilterForm,
+    NautobotModelForm,
+    TagsBulkEditFormMixin,
+)
 
 from nautobot_dev_example import models
 
@@ -19,10 +24,14 @@ class DevExampleForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
         ]
 
 
-class DevExampleBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # pylint: disable=too-many-ancestors
+class DevExampleBulkEditForm(
+    TagsBulkEditFormMixin, NautobotBulkEditForm
+):  # pylint: disable=too-many-ancestors
     """DevExample bulk edit form."""
 
-    pk = forms.ModelMultipleChoiceField(queryset=models.DevExample.objects.all(), widget=forms.MultipleHiddenInput)
+    pk = forms.ModelMultipleChoiceField(
+        queryset=models.DevExample.objects.all(), widget=forms.MultipleHiddenInput
+    )
     description = forms.CharField(required=False)
 
     class Meta:
