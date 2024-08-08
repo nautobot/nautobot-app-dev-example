@@ -1,7 +1,8 @@
 """Test DevExample Filter."""
+
 from django.test import TestCase
-from nautobot_dev_example import filters
-from nautobot_dev_example import models
+
+from nautobot_dev_example import filters, models
 from nautobot_dev_example.tests import fixtures
 
 
