@@ -50,7 +50,7 @@ namespace.configure(
         "nautobot_dev_example": {
             "nautobot_ver": "2.3.1",
             "project_name": "nautobot-dev-example",
-            "python_ver": "3.12",
+            "python_ver": "3.11",
             "local": False,
             "compose_dir": os.path.join(os.path.dirname(__file__), "development"),
             "compose_files": [
