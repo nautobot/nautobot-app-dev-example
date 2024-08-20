@@ -9,7 +9,7 @@
 # Accepts a desired Nautobot version as build argument, default to 2.0.0
 ARG NAUTOBOT_VER="2.0.0"
 
-# Accepts a desired Python version as build argument, default to 3.12
+# Accepts a desired Python version as build argument, default to 3.11
 ARG PYTHON_VER="3.11"
 
 # Retrieve published development image of Nautobot base which should include most CI dependencies
