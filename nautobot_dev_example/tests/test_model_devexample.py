@@ -17,8 +17,6 @@ class TestDevExample(TestCase):
 
     def test_create_devexample_all_fields_success(self):
         """Create DevExample with all fields."""
-        devexample = models.DevExample.objects.create(
-            name="Development", description="Development Test"
-        )
+        devexample = models.DevExample.objects.create(name="Development", description="Development Test")
         self.assertEqual(devexample.name, "Development")
         self.assertEqual(devexample.description, "Development Test")
