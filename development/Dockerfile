@@ -59,7 +59,10 @@ COPY . /source
 
 # Constrain the Nautobot version to NAUTOBOT_VER
 # In CI, this should be done outside of the Dockerfile to prevent cross-compile build failures
-RUN if ! test -v CI; then poetry add nautobot@${NAUTOBOT_VER} --python ${PYTHON_VER}; fi
+ARG CI
+RUN if [ -z "${CI+x}" ]; then \
+    INSTALLED_NAUTOBOT_VER=$(pip show nautobot | grep "^Version" | sed "s/Version: //"); \
+    poetry add nautobot@${INSTALLED_NAUTOBOT_VER} --python ${PYTHON_VER}; fi
 
 # Install the app
 RUN poetry install
