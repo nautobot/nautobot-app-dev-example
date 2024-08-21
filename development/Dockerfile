@@ -18,8 +18,7 @@ FROM ghcr.io/nautobot/nautobot-dev:${NAUTOBOT_VER}-py${PYTHON_VER}
 # Runtime argument and environment setup
 ARG NAUTOBOT_ROOT=/opt/nautobot
 
-# Docker needs to specify the build args in each stage
-ARG NAUTOBOT_VER
+# The build args must be declared in each stage
 ARG PYTHON_VER
 
 ENV prometheus_multiproc_dir=/prom_cache
@@ -62,7 +61,7 @@ COPY . /source
 ARG CI
 RUN if [ -z "${CI+x}" ]; then \
     INSTALLED_NAUTOBOT_VER=$(pip show nautobot | grep "^Version" | sed "s/Version: //"); \
-    poetry add nautobot@${INSTALLED_NAUTOBOT_VER} --python ${PYTHON_VER}; fi
+    poetry add --lock nautobot@${INSTALLED_NAUTOBOT_VER} --python ${PYTHON_VER}; fi
 
 # Install the app
 RUN poetry install
