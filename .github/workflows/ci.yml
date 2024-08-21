@@ -155,7 +155,7 @@ jobs:
           docker run --rm -it --entrypoint "" ghcr.io/nautobot/nautobot-dev:${{ matrix.nautobot-version }}-py${{ matrix.python-version }} pip show nautobot \ |
           grep "^Version" | sed "s/Version: //" >> /tmp/nautobot_version.txt
           export NAUTOBOT_VER=$(cat /tmp/nautobot_version.txt)
-          echo "Using Nautobot version: $NAUTOBOT_VER"
+          echo "Using Nautobot version: $NAUTOBOT_VER" # Debugging
           poetry add nautobot@$NAUTOBOT_VER --python ${{ matrix.python-version }}
       - name: "Set up Docker Buildx"
         id: "buildx"
