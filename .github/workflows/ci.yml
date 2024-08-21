@@ -98,8 +98,6 @@ jobs:
           grep "^Version" | sed "s/Version: //" > /tmp/nautobot_version.txt
           export NAUTOBOT_VER=$(cat /tmp/nautobot_version.txt)
           poetry add nautobot@$NAUTOBOT_VER --python ${{ matrix.python-version }}
-      - name: "Set up QEMU"  # For testing multi-arch builds -- do not merge
-        uses: "docker/setup-qemu-action@v2"  # For testing multi-arch builds -- do not merge
       - name: "Set up Docker Buildx"
         id: "buildx"
         uses: "docker/setup-buildx-action@v3"
@@ -109,11 +107,9 @@ jobs:
           builder: "${{ steps.buildx.outputs.name }}"
           context: "./"
           push: false
-          # load: true  # For testing multi-arch builds -- uncomment before merging
-          outputs: "type=image"  # For testing multi-arch builds -- do not merge
+          load: true
           tags: "${{ env.APP_NAME }}/nautobot:${{ matrix.nautobot-version }}-py${{ matrix.python-version }}"
           file: "./development/Dockerfile"
-          platforms: "linux/amd64,linux/arm64"  # For testing multi-arch builds -- do not merge
           cache-from: "type=gha,scope=${{ matrix.nautobot-version }}-py${{ matrix.python-version }}"
           cache-to: "type=gha,scope=${{ matrix.nautobot-version }}-py${{ matrix.python-version }}"
           build-args: |
