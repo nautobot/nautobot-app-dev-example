@@ -1,6 +1,6 @@
 ---
 dev_addr: "127.0.0.1:8001"
-edit_uri: "edit/main/nautobot-app-dev-example/docs"
+edit_uri: "edit/main/docs"
 site_dir: "nautobot_dev_example/static/nautobot_dev_example/docs"
 site_name: "Nautobot Dev Example App Documentation"
 site_url: "https://docs.nautobot.com/projects/dev-example/en/latest/"
