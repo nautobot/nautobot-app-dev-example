@@ -4,7 +4,7 @@ nautobot_dev_example:
   nautobot_ver: "2.3.1"
   local: false
   python_ver: "3.11"
-  compose_dir: "development"
+  compose_dir: "/full/path/to/nautobot-app-dev-example/development"
   compose_files:
     - "docker-compose.base.yml"
     - "docker-compose.redis.yml"
