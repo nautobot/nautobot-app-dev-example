@@ -109,7 +109,8 @@ jobs:
           builder: "${{ steps.buildx.outputs.name }}"
           context: "./"
           push: false
-          load: true
+          # load: true  # For testing multi-arch builds -- uncomment before merging
+          outputs: type=image  # For testing multi-arch builds -- do not merge
           tags: "${{ env.APP_NAME }}/nautobot:${{ matrix.nautobot-version }}-py${{ matrix.python-version }}"
           file: "./development/Dockerfile"
           platforms: "linux/amd64,linux/arm64"  # For testing multi-arch builds -- do not merge
