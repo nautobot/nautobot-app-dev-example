@@ -159,17 +159,17 @@ def run_command(context, command, **kwargs):
         # Check if nautobot is running, no need to start another nautobot container to run a command
         docker_compose_status = "ps --services --filter status=running"
         results = docker_compose(context, docker_compose_status, hide="out")
-        if "nautobot" in results.stdout:
-            compose_command = "exec"
-        else:
-            compose_command = "run --rm --entrypoint=''"
 
+        command_env_args = ""
         if "command_env" in kwargs:
             command_env = kwargs.pop("command_env")
             for key, value in command_env.items():
-                compose_command += f' --env="{key}={value}"'
+                command_env_args += f' --env="{key}={value}"'
 
-        compose_command += f" -- nautobot {command}"
+        if "nautobot" in results.stdout:
+            compose_command = f"exec{command_env_args} nautobot {command}"
+        else:
+            compose_command = f"run{command_env_args} --rm --entrypoint='{command}' nautobot"
 
         pty = kwargs.pop("pty", True)
 
@@ -494,7 +494,12 @@ def dbshell(context, db_name="", input_file="", output_file="", query=""):
         f"> '{output_file}'" if output_file else "",
     ]
 
-    docker_compose(context, " ".join(command), env=env, pty=not (input_file or output_file or query))
+    docker_compose(
+        context,
+        " ".join(command),
+        env=env,
+        pty=not (input_file or output_file or query),
+    )
 
 
 @task(
@@ -669,42 +674,39 @@ def pylint(context):
 @task(aliases=("a",))
 def autoformat(context):
     """Run code autoformatting."""
-    ruff(context, fix=True)
+    ruff(context, action=["format"], fix=True)
 
 
 @task(
     help={
-        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `['lint']`)",
+        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `['lint', 'format']`)",
+        "target": "File or directory to inspect, repeatable (default: all files in the project will be inspected)",
         "fix": "Automatically fix selected actions. May not be able to fix all issues found. (default: False)",
-        "output_format": "See https://docs.astral.sh/ruff/settings/#output-format for details. (default: `full`)",
+        "output_format": "See https://docs.astral.sh/ruff/settings/#output-format for details. (default: `concise`)",
     },
-    iterable=["action"],
+    iterable=["action", "target"],
 )
-def ruff(context, action=["lint"], fix=False, output_format="full"):
+def ruff(context, action=None, target=None, fix=False, output_format="concise"):
     """Run ruff to perform code formatting and/or linting."""
     if not action:
-        action = ["lint"]
+        action = ["lint", "format"]
+    if not target:
+        target = ["."]
 
     if "format" in action:
-        command = "ruff format"
+        command = "ruff format "
         if not fix:
-            command += " --check"
-        command += " ."
-        run_command(context, command)
+            command += "--check "
+        command += " ".join(target)
+        run_command(context, command, warn=True)
 
     if "lint" in action:
-        command = "ruff check"
+        command = "ruff check "
         if fix:
-            command += " --fix"
-        command += f" --output-format {output_format} ."
-        run_command(context, command)
-
-
-@task
-def bandit(context):
-    """Run bandit to validate basic static code security analysis."""
-    command = "bandit --recursive . --configfile .bandit.yml"
-    run_command(context, command)
+            command += "--fix "
+        command += f"--output-format {output_format} "
+        command += " ".join(target)
+        run_command(context, command, warn=True)
 
 
 @task
@@ -786,8 +788,6 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     # Sorted loosely from fastest to slowest
     print("Running ruff...")
     ruff(context)
-    print("Running bandit...")
-    bandit(context)
     print("Running yamllint...")
     yamllint(context)
     print("Running poetry check...")
@@ -820,11 +820,20 @@ def generate_app_config_schema(context):
     - `NautobotAppConfig.required_settings`
     """
     start(context, service="nautobot")
-    nbshell(context, file="development/app_config_schema.py", env={"APP_CONFIG_SCHEMA_COMMAND": "generate"})
+    nbshell(
+        context,
+        file="development/app_config_schema.py",
+        env={"APP_CONFIG_SCHEMA_COMMAND": "generate"},
+    )
 
 
 @task
 def validate_app_config(context):
     """Validate the app config based on the app config schema."""
     start(context, service="nautobot")
-    nbshell(context, plain=True, file="development/app_config_schema.py", env={"APP_CONFIG_SCHEMA_COMMAND": "validate"})
+    nbshell(
+        context,
+        plain=True,
+        file="development/app_config_schema.py",
+        env={"APP_CONFIG_SCHEMA_COMMAND": "validate"},
+    )

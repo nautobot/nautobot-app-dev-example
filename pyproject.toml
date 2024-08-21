@@ -33,7 +33,6 @@ python = ">=3.8,<3.13"
 nautobot = "^2.0.0"
 
 [tool.poetry.group.dev.dependencies]
-bandit = "*"
 coverage = "*"
 django-debug-toolbar = "*"
 invoke = "*"
@@ -41,16 +40,16 @@ ipython = "*"
 pylint = "*"
 pylint-django = "*"
 pylint-nautobot = "*"
-ruff = "*"
+ruff = "0.5.5"
 yamllint = "*"
 toml = "*"
 Markdown = "*"
+# Render custom markdown for version added/changed/remove notes
+markdown-version-annotations = "1.0.1"
 # Rendering docs to HTML
 mkdocs = "1.5.2"
 # Material for MkDocs theme
 mkdocs-material = "9.1.15"
-# Render custom markdown for version added/changed/remove notes
-mkdocs-version-annotations = "1.0.0"
 # Automatic documentation from sources, for MkDocs
 mkdocstrings = "0.22.0"
 mkdocstrings-python = "1.5.2"
@@ -96,7 +95,6 @@ target-version = "py38"
 select = [
     "D",  # pydocstyle
     "F", "E", "W",  # flake8
-    "PL",  # pylint
     "S",  # bandit
     "I",  # isort
 ]
