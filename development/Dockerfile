@@ -18,9 +18,6 @@ FROM ghcr.io/nautobot/nautobot-dev:${NAUTOBOT_VER}-py${PYTHON_VER}
 # Runtime argument and environment setup
 ARG NAUTOBOT_ROOT=/opt/nautobot
 
-# The build args must be declared in each stage
-ARG PYTHON_VER
-
 ENV prometheus_multiproc_dir=/prom_cache
 ENV NAUTOBOT_ROOT=${NAUTOBOT_ROOT}
 ENV INVOKE_NAUTOBOT_DEV_EXAMPLE_LOCAL=true
@@ -55,6 +52,9 @@ RUN which poetry || curl -sSL https://install.python-poetry.org | python3 - && \
 # Copy in the source code
 WORKDIR /source
 COPY . /source
+
+# Build args must be declared in each stage
+ARG PYTHON_VER
 
 # Constrain the Nautobot version to NAUTOBOT_VER
 # In CI, this should be done outside of the Dockerfile to prevent cross-compile build failures
