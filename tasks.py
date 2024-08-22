@@ -232,11 +232,13 @@ def _get_docker_nautobot_version(context, nautobot_ver=None, python_ver=None):
         ),
         "constrain_nautobot_ver": (
             "Run 'poetry add nautobot@[version] --lock' to generate the lockfile, "
-            "where [version] is the version installed in the Dockerfile's base image. (default: disabled)",
+            "where [version] is the version installed in the Dockerfile's base image. "
+            "Generally intended to be used in CI and not for local development. (default: disabled)"
         ),
         "constrain_python_ver": (
-            "When using `constrain_nautobot_ver`, further constrain the nautobot version to python_ver so that poetry "
-            "doesn't complain about python version incompatibilities. This should only be used for testing!! (default: disabled)",
+            "When using `constrain_nautobot_ver`, further constrain the nautobot version "
+            "to python_ver so that poetry doesn't complain about python version incompatibilities. "
+            "Generally intended to be used in CI and not for local development. (default: disabled)"
         ),
     }
 )
