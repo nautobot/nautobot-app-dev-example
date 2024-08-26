@@ -1,4 +1,5 @@
 """Test devexample forms."""
+
 from django.test import TestCase
 
 from nautobot_dev_example import forms

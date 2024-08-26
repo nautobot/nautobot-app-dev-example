@@ -1,4 +1,5 @@
 """Create fixtures for tests."""
+
 from nautobot_dev_example.models import DevExample
 
 
