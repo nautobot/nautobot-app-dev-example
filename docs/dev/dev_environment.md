@@ -189,7 +189,7 @@ Next, you need to start up your Docker containers.
 ```bash
 ➜ invoke start
 Starting Nautobot in detached mode...
-Running docker-compose command "up --detach"
+Running docker compose command "up --detach"
 Creating network "nautobot_dev_example_default" with the default driver
 Creating volume "nautobot_dev_example_postgres_data" with default driver
 Creating nautobot_dev_example_redis_1 ...
@@ -240,8 +240,8 @@ If you need to create additional superusers, run the follow commands.
 
 ```bash
 ➜ invoke createsuperuser
-Running docker-compose command "ps --services --filter status=running"
-Running docker-compose command "exec nautobot nautobot-server createsuperuser --username admin"
+Running docker compose command "ps --services --filter status=running"
+Running docker compose command "exec nautobot nautobot-server createsuperuser --username admin"
 Error: That username is already taken.
 Username: ntc
 Email address: ntc@networktocode.com
@@ -257,7 +257,7 @@ The last command to know for now is `invoke stop`.
 ```bash
 ➜ invoke stop
 Stopping Nautobot...
-Running docker-compose command "down"
+Running docker compose command "down"
 Stopping nautobot_dev_example_worker_1   ...
 Stopping nautobot_dev_example_nautobot_1 ...
 Stopping nautobot_dev_example_docs_1     ...

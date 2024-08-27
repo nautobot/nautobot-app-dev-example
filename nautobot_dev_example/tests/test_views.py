@@ -1,4 +1,5 @@
 """Unit tests for views."""
+
 from nautobot.utilities.testing import ViewTestCases
 
 from nautobot_dev_example import models

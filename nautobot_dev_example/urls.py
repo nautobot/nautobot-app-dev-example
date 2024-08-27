@@ -1,4 +1,5 @@
 """Django urlpatterns declaration for nautobot_dev_example plugin."""
+
 from django.urls import path
 from nautobot.extras.views import ObjectChangeLogView
 
