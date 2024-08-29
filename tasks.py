@@ -530,12 +530,7 @@ def dbshell(context, db_name="", input_file="", output_file="", query=""):
         f"> '{output_file}'" if output_file else "",
     ]
 
-    docker_compose(
-        context,
-        " ".join(command),
-        env=env,
-        pty=not (input_file or output_file or query),
-    )
+    docker_compose(context, " ".join(command), env=env, pty=not (input_file or output_file or query))
 
 
 @task(
@@ -856,20 +851,11 @@ def generate_app_config_schema(context):
     - `NautobotAppConfig.required_settings`
     """
     start(context, service="nautobot")
-    nbshell(
-        context,
-        file="development/app_config_schema.py",
-        env={"APP_CONFIG_SCHEMA_COMMAND": "generate"},
-    )
+    nbshell(context, file="development/app_config_schema.py", env={"APP_CONFIG_SCHEMA_COMMAND": "generate"})
 
 
 @task
 def validate_app_config(context):
     """Validate the app config based on the app config schema."""
     start(context, service="nautobot")
-    nbshell(
-        context,
-        plain=True,
-        file="development/app_config_schema.py",
-        env={"APP_CONFIG_SCHEMA_COMMAND": "validate"},
-    )
+    nbshell(context, plain=True, file="development/app_config_schema.py", env={"APP_CONFIG_SCHEMA_COMMAND": "validate"})
