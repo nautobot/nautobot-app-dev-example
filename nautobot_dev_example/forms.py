@@ -24,10 +24,14 @@ class DevExampleForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
         ]
 
 
-class DevExampleBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # pylint: disable=too-many-ancestors
+class DevExampleBulkEditForm(
+    TagsBulkEditFormMixin, NautobotBulkEditForm
+):  # pylint: disable=too-many-ancestors
     """DevExample bulk edit form."""
 
-    pk = forms.ModelMultipleChoiceField(queryset=models.DevExample.objects.all(), widget=forms.MultipleHiddenInput)
+    pk = forms.ModelMultipleChoiceField(
+        queryset=models.DevExample.objects.all(), widget=forms.MultipleHiddenInput
+    )
     description = forms.CharField(required=False)
 
     class Meta:
