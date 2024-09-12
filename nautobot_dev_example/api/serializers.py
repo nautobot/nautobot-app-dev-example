@@ -5,9 +5,7 @@ from nautobot.apps.api import NautobotModelSerializer, TaggedModelSerializerMixi
 from nautobot_dev_example import models
 
 
-class DevExampleSerializer(
-    NautobotModelSerializer, TaggedModelSerializerMixin
-):  # pylint: disable=too-many-ancestors
+class DevExampleSerializer(NautobotModelSerializer, TaggedModelSerializerMixin):  # pylint: disable=too-many-ancestors
     """DevExample Serializer."""
 
     class Meta:
