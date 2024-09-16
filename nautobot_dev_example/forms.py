@@ -15,6 +15,7 @@ class DevExampleForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
         model = models.DevExample
         fields = "__all__"
 
+
 class DevExampleBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # pylint: disable=too-many-ancestors
     """DevExample bulk edit form."""
 
