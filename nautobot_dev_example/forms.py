@@ -13,11 +13,7 @@ class DevExampleForm(NautobotModelForm):  # pylint: disable=too-many-ancestors
         """Meta attributes."""
 
         model = models.DevExample
-        fields = [
-            "name",
-            "description",
-        ]
-
+        fields = "__all__"
 
 class DevExampleBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # pylint: disable=too-many-ancestors
     """DevExample bulk edit form."""
