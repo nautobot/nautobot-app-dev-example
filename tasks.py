@@ -706,11 +706,53 @@ def hadolint(context):
     run_command(context, command)
 
 
-@task
-def pylint(context):
+@task(
+    help={
+        "ref": "`pylint-nautobot` git reference to use for the analysis, can be a local path to the repository"
+        ", or a git reference e.g. `--ref=develop`. Use currently installed version if empty. (default: Empty)",
+    }
+)
+def pylint(context, ref=""):
     """Run pylint code analysis."""
-    command = 'pylint --init-hook "import nautobot; nautobot.setup()" --rcfile pyproject.toml nautobot_dev_example'
-    run_command(context, command)
+    pylint_command = [
+        "pylint",
+        '--init-hook="import nautobot; nautobot.setup()"',
+        "--rcfile=pyproject.toml",
+        "nautobot_dev_example",
+    ]
+
+    if not ref:
+        run_command(context, " ".join(pylint_command))
+        return
+
+    pip_and_pylint_command = ["pip install"]
+
+    local_pylint_nautobot_path = Path(ref).resolve().absolute()
+    if local_pylint_nautobot_path.is_dir() and (local_pylint_nautobot_path / "pyproject.toml").is_file():
+        pip_and_pylint_command.append(f"-e {local_pylint_nautobot_path}")
+    else:
+        local_pylint_nautobot_path = None
+        pip_and_pylint_command.append(f"git+https://github.com/nautobot/pylint-nautobot.git@{ref}")
+
+    pip_and_pylint_command += [
+        "&&",
+        *pylint_command,
+    ]
+
+    if is_truthy(context.nautobot_dev_example.local):
+        context.run(" ".join(pip_and_pylint_command))
+        return
+
+    docker_run_command = [
+        "run --rm --entrypoint=''",
+        f"--volume {local_pylint_nautobot_path}:{local_pylint_nautobot_path}" if local_pylint_nautobot_path else "",
+        "-- nautobot sh -c '",
+        *pip_and_pylint_command,
+        "'",
+    ]
+
+    # Do not use `run_command()` to avoid poluting the running container with the installed package
+    docker_compose(context, " ".join(docker_run_command))
 
 
 @task(aliases=("a",))
