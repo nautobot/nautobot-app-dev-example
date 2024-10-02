@@ -709,8 +709,21 @@ def hadolint(context):
 @task
 def pylint(context):
     """Run pylint code analysis."""
+    exit_code = 0
+
     command = 'pylint --init-hook "import nautobot; nautobot.setup()" --rcfile pyproject.toml nautobot_dev_example'
-    run_command(context, command)
+    if not run_command(context, command, warn=True):
+        exit_code = 1
+
+    # run the pylint_django migrations checkers on the migrations directory
+    migrations_pylint = (
+        'pylint --verbose --init-hook "import nautobot; nautobot.setup()" --rcfile pyproject.toml '
+        "--load-plugins=pylint_django.checkers.migrations --disable=all --enable=new-db-field-with-default,missing-backwards-migration-callable nautobot_dev_example.migrations"
+    )
+    if not run_command(context, migrations_pylint, warn=True):
+        exit_code = 1
+
+    raise Exit(code=exit_code)
 
 
 @task(aliases=("a",))
