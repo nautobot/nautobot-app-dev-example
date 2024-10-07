@@ -716,14 +716,18 @@ def pylint(context):
     if not run_command(context, command, warn=True):
         exit_code = 1
 
-    # run the pylint_django migrations checkers on the migrations directory
-    migrations_pylint_command = (
-        f"{base_pylint_command} --load-plugins=pylint_django.checkers.migrations"
-        " --disable=all --enable=new-db-field-with-default,missing-backwards-migration-callable"
-        " nautobot_dev_example.migrations"
-    )
-    if not run_command(context, migrations_pylint_command, warn=True):
-        exit_code = 1
+    # run the pylint_django migrations checkers on the migrations directory, if one exists
+    migrations_dir = Path(__file__).absolute().parent / Path("nautobot_dev_example") / Path("migrations")
+    if migrations_dir.is_dir():
+        migrations_pylint_command = (
+            f"{base_pylint_command} --load-plugins=pylint_django.checkers.migrations"
+            " --disable=all --enable=fatal,new-db-field-with-default,missing-backwards-migration-callable"
+            " nautobot_dev_example.migrations"
+        )
+        if not run_command(context, migrations_pylint_command, warn=True):
+            exit_code = 1
+    else:
+        print("No migrations directory found, skipping migrations checks.")
 
     raise Exit(code=exit_code)
 
