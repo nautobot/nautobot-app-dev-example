@@ -717,7 +717,7 @@ def pylint(context):
         exit_code = 1
 
     # run the pylint_django migrations checkers on the migrations directory, if one exists
-    migrations_dir = Path(__file__).absolute().parent / Path("nautobot_dev_example/migrations")
+    migrations_dir = Path(__file__).absolute().parent / Path("nautobot_dev_example") / Path("migrations")
     if migrations_dir.is_dir():
         migrations_pylint_command = (
             f"{base_pylint_command} --load-plugins=pylint_django.checkers.migrations"
