@@ -251,6 +251,7 @@ def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ve
         if constrain_python_ver:
             command += f" --python {context.nautobot_dev_example.python_ver}"
         try:
+            run_command(context, command, hide=True)
             output = run_command(context, command, hide=True)
             print(output.stdout, end="")
             print(output.stderr, file=sys.stderr, end="")
@@ -690,6 +691,8 @@ def generate_release_notes(context, version=""):
     command = "poetry run towncrier build"
     if version:
         command += f" --version {version}"
+    else:
+        command += " --version `poetry version -s`"
     # Due to issues with git repo ownership in the containers, this must always run locally.
     context.run(command)
 
