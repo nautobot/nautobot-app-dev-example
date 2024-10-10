@@ -1,4 +1,5 @@
 """API serializers for nautobot_dev_example."""
+
 from nautobot.apps.api import NautobotModelSerializer, TaggedModelSerializerMixin
 
 from nautobot_dev_example import models
