@@ -815,6 +815,7 @@ def unittest(  # noqa: PLR0913
     label="nautobot_dev_example",
     failfast=False,
     buffer=True,
+    pdb=False,
     pattern="",
     verbose=False,
 ):
@@ -827,6 +828,8 @@ def unittest(  # noqa: PLR0913
         command += " --failfast"
     if buffer:
         command += " --buffer"
+    if pdb:
+        command += " --pdb"
     if pattern:
         command += f" -k='{pattern}'"
     if verbose:
@@ -850,7 +853,7 @@ def unittest_coverage(context):
         "lint-only": "Only run linters; unit tests will be excluded. (default: False)",
     }
 )
-def tests(context, failfast=False, keepdb=False, lint_only=False):
+def tests(context, failfast=False, keepdb=False, lint_only=False, buffer=True, pdb=False):
     """Run all tests for this app."""
     # If we are not running locally, start the docker containers so we don't have to for each test
     if not is_truthy(context.nautobot_dev_example.local):
@@ -873,7 +876,7 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     validate_app_config(context)
     if not lint_only:
         print("Running unit tests...")
-        unittest(context, failfast=failfast, keepdb=keepdb)
+        unittest(context, failfast=failfast, keepdb=keepdb, buffer=buffer, pdb=pdb)
         unittest_coverage(context)
     print("All tests have passed!")
 
