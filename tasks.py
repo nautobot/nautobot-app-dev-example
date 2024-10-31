@@ -805,6 +805,7 @@ def check_migrations(context):
         "label": "specify a directory or module to test instead of running all Nautobot tests",
         "failfast": "fail as soon as a single test fails don't run the entire test suite",
         "buffer": "Discard output from passing tests",
+        "pdb": "Start the Python debugger shell on test failures to allow for interactive debugging",
         "pattern": "Run specific test methods, classes, or modules instead of all tests",
         "verbose": "Enable verbose test output.",
     }
@@ -851,6 +852,8 @@ def unittest_coverage(context):
         "failfast": "fail as soon as a single test fails don't run the entire test suite. (default: False)",
         "keepdb": "Save and re-use test database between test runs for faster re-testing. (default: False)",
         "lint-only": "Only run linters; unit tests will be excluded. (default: False)",
+        "buffer": "Discard output from passing tests",
+        "pdb": "Start the Python debugger shell on test failures to allow for interactive debugging",
     }
 )
 def tests(context, failfast=False, keepdb=False, lint_only=False, buffer=True, pdb=False):

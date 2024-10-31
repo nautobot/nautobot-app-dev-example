@@ -1,1 +1,1 @@
-Added a `pdb` flag under the `unittest` task.
+Added a `pdb` flag to the `invoke unittest` task.
