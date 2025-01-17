@@ -8,7 +8,9 @@ from nautobot.apps.urls import NautobotUIViewSetRouter
 from nautobot_dev_example import views
 
 router = NautobotUIViewSetRouter()
+
 router.register("devexample", views.DevExampleUIViewSet)
+
 
 urlpatterns = [
     path("docs/", RedirectView.as_view(url=static("nautobot_dev_example/docs/index.html")), name="docs"),
