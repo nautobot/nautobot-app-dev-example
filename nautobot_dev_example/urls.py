@@ -9,6 +9,7 @@ from nautobot_dev_example import views
 
 app_name = "nautobot_dev_example"
 
+app_name = "nautobot_dev_example"
 router = NautobotUIViewSetRouter()
 
 router.register("devexample", views.DevExampleUIViewSet)
