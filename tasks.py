@@ -809,6 +809,7 @@ def check_migrations(context):
         "label": "specify a directory or module to test instead of running all Nautobot tests",
         "failfast": "fail as soon as a single test fails don't run the entire test suite",
         "buffer": "Discard output from passing tests",
+        "pdb": "Start the Python debugger shell on test failures to allow for interactive debugging",
         "pattern": "Run specific test methods, classes, or modules instead of all tests",
         "verbose": "Enable verbose test output.",
     }
@@ -819,6 +820,7 @@ def unittest(  # noqa: PLR0913
     label="nautobot_dev_example",
     failfast=False,
     buffer=True,
+    pdb=False,
     pattern="",
     verbose=False,
 ):
@@ -831,6 +833,8 @@ def unittest(  # noqa: PLR0913
         command += " --failfast"
     if buffer:
         command += " --buffer"
+    if pdb:
+        command += " --pdb"
     if pattern:
         command += f" -k='{pattern}'"
     if verbose:
@@ -852,9 +856,11 @@ def unittest_coverage(context):
         "failfast": "fail as soon as a single test fails don't run the entire test suite. (default: False)",
         "keepdb": "Save and re-use test database between test runs for faster re-testing. (default: False)",
         "lint-only": "Only run linters; unit tests will be excluded. (default: False)",
+        "buffer": "Discard output from passing tests",
+        "pdb": "Start the Python debugger shell on test failures to allow for interactive debugging",
     }
 )
-def tests(context, failfast=False, keepdb=False, lint_only=False):
+def tests(context, failfast=False, keepdb=False, lint_only=False, buffer=True, pdb=False):
     """Run all tests for this app."""
     # If we are not running locally, start the docker containers so we don't have to for each test
     if not is_truthy(context.nautobot_dev_example.local):
@@ -877,7 +883,7 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     validate_app_config(context)
     if not lint_only:
         print("Running unit tests...")
-        unittest(context, failfast=failfast, keepdb=keepdb)
+        unittest(context, failfast=failfast, keepdb=keepdb, buffer=buffer, pdb=pdb)
         unittest_coverage(context)
     print("All tests have passed!")
 
