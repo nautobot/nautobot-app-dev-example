@@ -807,6 +807,7 @@ def check_migrations(context):
         "buffer": "Discard output from passing tests",
         "pattern": "Run specific test methods, classes, or modules instead of all tests",
         "verbose": "Enable verbose test output.",
+        "coverage": "Enable coverage reporting. Defaults to False",
     }
 )
 def unittest(  # noqa: PLR0913
@@ -817,9 +818,13 @@ def unittest(  # noqa: PLR0913
     buffer=True,
     pattern="",
     verbose=False,
+    coverage=False,
 ):
     """Run Nautobot unit tests."""
-    command = f"coverage run --module nautobot.core.cli test {label}"
+    if coverage:
+        command = f"coverage run --module nautobot.core.cli test {label}"
+    else:
+        command = f"nautobot-server test {label}"
 
     if keepdb:
         command += " --keepdb"
@@ -837,7 +842,7 @@ def unittest(  # noqa: PLR0913
 
 @task
 def unittest_coverage(context):
-    """Report on code test coverage as measured by 'invoke unittest'."""
+    """Report on code test coverage as measured by 'invoke unittest --coverage'."""
     command = "coverage report --skip-covered --include 'nautobot_dev_example/*' --omit *migrations*"
 
     run_command(context, command)
@@ -873,7 +878,7 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     validate_app_config(context)
     if not lint_only:
         print("Running unit tests...")
-        unittest(context, failfast=failfast, keepdb=keepdb)
+        unittest(context, failfast=failfast, keepdb=keepdb, coverage=True)
         unittest_coverage(context)
     print("All tests have passed!")
 
