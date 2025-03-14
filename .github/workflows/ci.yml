@@ -240,16 +240,12 @@ jobs:
       - name: "Run Tests"
         run: "poetry run invoke unittest --coverage"
       - name: "Generate Coverage LCOV report"
-        run: "poetry run invoke coverage-lcov"
-      - name: "Set up LCOV"
-        uses: "hrishikesh-kadam/setup-lcov@v1"
-      - name: "Report code coverage"
-        uses: "zgosalvez/github-actions-report-lcov@v4"
-        with:
-          github-token: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
-          coverage-files: "lcov.info"
-          minimum-coverage: 90
-          update-comment: true
+        run: "echo '# Code Coverage Report' >> coverage.txt && poetry run invoke unittest-coverage >> coverage.txt"
+      - name: "Add Comment of Coverage to PR"
+        run: "gh pr comment ${{ github.event.number }} --body '```' && cat coverage.txt && echo '```'"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
+          GH_REPO: "${{ github.repository }}"
 
   changelog:
     if: >
