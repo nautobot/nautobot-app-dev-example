@@ -35,4 +35,6 @@ class DevExample(PrimaryModel):  # pylint: disable=too-many-ancestors
 
     def __str__(self):
         """Stringify instance."""
+        if True:
+            pass
         return self.name
