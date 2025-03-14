@@ -242,19 +242,20 @@ jobs:
         if: "matrix.db-backend == 'mysql'"
       - name: "Run Tests"
         run: "poetry run invoke unittest --coverage"
-      - name: "Generate Coverage LCOV report"
-        run: "poetry run invoke coverage-lcov"
-      - name: "Add Coverage comment to text file"
-        run: "echo '# Code Coverage Report\n```' >> coverage.txt && poetry run invoke unittest-coverage | sed -E 's/\x1B\\[[0-9;?]*[a-zA-Z]//g' | awk '/^Name/,0' >> coverage.txt && echo '```' >> coverage.txt"
-      - name: "Install diff-cover"
-        run: "pip install diff_cover"
-      - name: "Run diff-cover"
-        run: "echo '## Diff against ${{ github.base_ref }}' >> coverage.txt && diff-cover lcov.info --compare-branch origin/${{ github.base_ref }} >> coverage.txt"
-      - name: "Add Comment of Coverage to PR"
-        run: "gh pr comment ${{ github.event.number }} --body-file coverage.txt"
-        env:
+      - name: "Generate Coverage Comment"
+        id: coverage_comment
+        uses: "py-cov-action/python-coverage-comment-action@v3"
+        with:
           GITHUB_TOKEN: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
-          GH_REPO: "${{ github.repository }}"
+          MINIMUM_GREEN: 90
+          MINIMUM_ORANGE: 80
+          ANNOTATE_MISSING_LINES: True
+          ANNOTATION_TYPE: "warning"
+      - name: "Store Pull Request comment to be posted"
+        uses: "actions/upload-artifact@v4"
+        with:
+          name: "python-coverage-comment-action"
+          path: "python-coverage-comment-action.txt"
 
   changelog:
     if: >
