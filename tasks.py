@@ -860,6 +860,14 @@ def coverage_lcov(context):
     run_command(context, command)
 
 
+@task
+def coverage_xml(context):
+    """Generate an XML coverage report."""
+    command = "coverage xml --include 'nautobot_dev_example/*' --omit *migrations* -o coverage.xml"
+
+    run_command(context, command)
+
+
 @task(
     help={
         "failfast": "fail as soon as a single test fails don't run the entire test suite. (default: False)",

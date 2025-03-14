@@ -203,6 +203,9 @@ jobs:
         db-backend: ["postgresql"]
         nautobot-version: ["stable"]
     runs-on: "ubuntu-22.04"
+    permissions:
+      pull-requests: "write"
+      contents: "write"
     env:
       INVOKE_NAUTOBOT_DEV_EXAMPLE_PYTHON_VER: "${{ matrix.python-version }}"
       INVOKE_NAUTOBOT_DEV_EXAMPLE_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
