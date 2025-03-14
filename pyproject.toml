@@ -188,3 +188,6 @@ showcontent = true
 directory = "housekeeping"
 name = "Housekeeping"
 showcontent = true
+
+[tool.coverage.run]
+relative_files = true
