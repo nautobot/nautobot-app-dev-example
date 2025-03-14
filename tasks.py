@@ -852,6 +852,14 @@ def unittest_coverage(context):
     run_command(context, command)
 
 
+@task
+def coverage_lcov(context):
+    """Generate an LCOV coverage report."""
+    command = "coverage lcov --include 'nautobot_dev_example/*' --omit *migrations* -o lcov.info"
+
+    run_command(context, command)
+
+
 @task(
     help={
         "failfast": "fail as soon as a single test fails don't run the entire test suite. (default: False)",
@@ -884,6 +892,7 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
         print("Running unit tests...")
         unittest(context, failfast=failfast, keepdb=keepdb, coverage=True)
         unittest_coverage(context)
+        coverage_lcov(context)
     print("All tests have passed!")
 
 

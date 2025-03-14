@@ -188,7 +188,17 @@ jobs:
         run: "cp invoke.mysql.yml invoke.yml"
         if: "matrix.db-backend == 'mysql'"
       - name: "Run Tests"
-        run: "poetry run invoke unittest"
+        run: "poetry run invoke unittest --coverage"
+      - name: "Generate Coverage LCOV report"
+        run: "poetry run invoke coverage-lcov"
+      - name: "Report code coverage"
+        uses: "zgosalvez/github-actions-report-lcov@v4"
+        with:
+          github-token: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
+          coverage-files: "lcov.info"
+          minimum-coverage: 90
+          update-comment: true
+
   changelog:
     if: >
       contains(fromJson('["develop","ltm-1.6"]'), github.base_ref) &&
