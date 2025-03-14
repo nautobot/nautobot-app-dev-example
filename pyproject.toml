@@ -132,6 +132,9 @@ convention = "google"
     "S"
 ]
 
+[tool.coverage.run]
+relative_files = true
+
 [build-system]
 requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
@@ -188,6 +191,3 @@ showcontent = true
 directory = "housekeeping"
 name = "Housekeeping"
 showcontent = true
-
-[tool.coverage.run]
-relative_files = true
