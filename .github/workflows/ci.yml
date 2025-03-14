@@ -188,9 +188,61 @@ jobs:
         run: "cp invoke.mysql.yml invoke.yml"
         if: "matrix.db-backend == 'mysql'"
       - name: "Run Tests"
+        run: "poetry run invoke unittest"
+
+  unittest_report:
+    needs:
+      - "check-in-docker"
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ["3.12"]
+        db-backend: ["postgresql"]
+        nautobot-version: ["stable"]
+    runs-on: "ubuntu-22.04"
+    env:
+      INVOKE_NAUTOBOT_DEV_EXAMPLE_PYTHON_VER: "${{ matrix.python-version }}"
+      INVOKE_NAUTOBOT_DEV_EXAMPLE_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
+    steps:
+      - name: "Check out repository code"
+        uses: "actions/checkout@v4"
+      - name: "Setup environment"
+        uses: "networktocode/gh-action-setup-poetry-environment@v6"
+        with:
+          poetry-version: "1.8.5"
+      - name: "Constrain Nautobot version and regenerate lock file"
+        env:
+          INVOKE_NAUTOBOT_DEV_EXAMPLE_LOCAL: "true"
+        run: "poetry run invoke lock --constrain-nautobot-ver --constrain-python-ver"
+      - name: "Set up Docker Buildx"
+        id: "buildx"
+        uses: "docker/setup-buildx-action@v3"
+      - name: "Build"
+        uses: "docker/build-push-action@v5"
+        with:
+          builder: "${{ steps.buildx.outputs.name }}"
+          context: "./"
+          push: false
+          load: true
+          tags: "${{ env.APP_NAME }}/nautobot:${{ matrix.nautobot-version }}-py${{ matrix.python-version }}"
+          file: "./development/Dockerfile"
+          cache-from: "type=gha,scope=${{ matrix.nautobot-version }}-py${{ matrix.python-version }}"
+          cache-to: "type=gha,scope=${{ matrix.nautobot-version }}-py${{ matrix.python-version }}"
+          build-args: |
+            NAUTOBOT_VER=${{ matrix.nautobot-version }}
+            PYTHON_VER=${{ matrix.python-version }}
+            CI=true
+      - name: "Copy credentials"
+        run: "cp development/creds.example.env development/creds.env"
+      - name: "Use Mysql invoke settings when needed"
+        run: "cp invoke.mysql.yml invoke.yml"
+        if: "matrix.db-backend == 'mysql'"
+      - name: "Run Tests"
         run: "poetry run invoke unittest --coverage"
       - name: "Generate Coverage LCOV report"
         run: "poetry run invoke coverage-lcov"
+      - name: "Set up LCOV"
+        uses: "hrishikesh-kadam/setup-lcov@v1"
       - name: "Report code coverage"
         uses: "zgosalvez/github-actions-report-lcov@v4"
         with:
