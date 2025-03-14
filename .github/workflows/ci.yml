@@ -249,7 +249,7 @@ jobs:
       - name: "Install diff-cover"
         run: "pip install diff_cover"
       - name: "Run diff-cover"
-        run: "echo '## Diff against ${{ github.base_ref }}' >> coverage.txt && diff-cover lcov.info --compare-branch ${{ github.base_ref }} >> coverage.txt"
+        run: "echo '## Diff against ${{ github.base_ref }}' >> coverage.txt && diff-cover lcov.info --compare-branch origin/${{ github.base_ref }} >> coverage.txt"
       - name: "Add Comment of Coverage to PR"
         run: "gh pr comment ${{ github.event.number }} --body-file coverage.txt"
         env:
