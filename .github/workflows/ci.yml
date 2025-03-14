@@ -240,7 +240,7 @@ jobs:
       - name: "Run Tests"
         run: "poetry run invoke unittest --coverage"
       - name: "Generate Coverage LCOV report"
-        run: "echo '# Code Coverage Report\n```' >> coverage.txt && poetry run invoke unittest-coverage | awk '/^Name/,0' >> coverage.txt && echo '```' >> coverage.txt"
+        run: "echo '# Code Coverage Report\n```' >> coverage.txt && poetry run invoke unittest-coverage | sed -E 's/\x1B\[[0-9;?]*[a-zA-Z]//g' | awk '/^Name/,0' >> coverage.txt && echo '```' >> coverage.txt"
       - name: "Add Comment of Coverage to PR"
         run: "gh pr comment ${{ github.event.number }} --body-file coverage.txt"
         env:
