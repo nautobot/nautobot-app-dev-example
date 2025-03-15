@@ -847,7 +847,7 @@ def unittest(  # noqa: PLR0913
 @task
 def unittest_coverage(context):
     """Report on code test coverage as measured by 'invoke unittest --coverage'."""
-    command = "coverage report --skip-covered --include 'nautobot_dev_example/*' --omit *migrations*"
+    command = "coverage report --skip-covered"
 
     run_command(context, command)
 
@@ -855,7 +855,7 @@ def unittest_coverage(context):
 @task
 def coverage_lcov(context):
     """Generate an LCOV coverage report."""
-    command = "coverage lcov --include 'nautobot_dev_example/*' --omit *migrations* -o lcov.info"
+    command = "coverage lcov -o lcov.info"
 
     run_command(context, command)
 
@@ -863,7 +863,7 @@ def coverage_lcov(context):
 @task
 def coverage_xml(context):
     """Generate an XML coverage report."""
-    command = "coverage xml --include 'nautobot_dev_example/*' --omit *migrations* -o coverage.xml"
+    command = "coverage xml -o coverage.xml"
 
     run_command(context, command)
 

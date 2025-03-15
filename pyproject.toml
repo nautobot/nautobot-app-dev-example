@@ -136,9 +136,12 @@ convention = "google"
 relative_files = true
 omit = [
     # Skip Migrations
-    "*migrations*",
-    # Skip nautobot config
-    "/opt/nautobot/nautobot_config.py",
+    "*/migrations/*",
+    # Skip Tests
+    "*/tests/*",
+]
+include = [
+    "nautobot_dev_example/*",
 ]
 
 [build-system]
