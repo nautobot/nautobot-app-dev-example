@@ -134,6 +134,12 @@ convention = "google"
 
 [tool.coverage.run]
 relative_files = true
+omit = [
+    # Skip Migrations
+    "*migrations*",
+    # Skip nautobot config
+    "/opt/nautobot/nautobot_config.py"
+]
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
