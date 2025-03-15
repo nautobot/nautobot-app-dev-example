@@ -35,6 +35,6 @@ class DevExample(PrimaryModel):  # pylint: disable=too-many-ancestors
 
     def __str__(self):
         """Stringify instance."""
-        if True:  # pylint: disable=using-constant-test
-            pass
+        if self.name == "shouldn't exist":
+            return "This is a test"
         return self.name
