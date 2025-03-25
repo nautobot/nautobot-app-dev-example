@@ -133,6 +133,7 @@ convention = "google"
 ]
 
 [tool.coverage.run]
+disable_warnings = ["already-imported"]
 relative_files = true
 omit = [
     # Skip Tests
