@@ -135,8 +135,6 @@ convention = "google"
 [tool.coverage.run]
 relative_files = true
 omit = [
-    # Skip Migrations
-    "*/migrations/*",
     # Skip Tests
     "*/tests/*",
 ]
