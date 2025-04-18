@@ -18,8 +18,8 @@ class NautobotDevExampleConfig(NautobotAppConfig):
     description = "Nautobot App to demonstrate how to create a Nautobot App.."
     base_url = "dev-example"
     required_settings = []
-    min_version = "2.0.0"
-    max_version = "2.9999"
+    min_version = "3.0.0a1"  # TODO: Update to 3.0.0 when Nautobot v3.0.0 is released
+    max_version = "3.9999"
     default_settings = {}
     caching_config = {}
     docs_view_name = "plugins:nautobot_dev_example:docs"
