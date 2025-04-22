@@ -216,7 +216,7 @@ jobs:
     env:
       INVOKE_NAUTOBOT_DEV_EXAMPLE_LOCAL: "True"
     permissions:
-      contents: write
+      contents: "write"
     steps:
       - name: "Check out repository code"
         uses: "actions/checkout@v4"
