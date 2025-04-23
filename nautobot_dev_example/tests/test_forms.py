@@ -1,11 +1,11 @@
 """Test devexample forms."""
 
-from nautobot.apps.testing import FormTestCases
+from django.test import TestCase
 
 from nautobot_dev_example import forms
 
 
-class DevExampleTest(FormTestCases.BaseFormTestCase):
+class DevExampleTest(TestCase):
     """Test DevExample forms."""
 
     def test_specifying_all_fields_success(self):
