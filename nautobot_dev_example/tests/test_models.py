@@ -9,6 +9,8 @@ from nautobot_dev_example.tests import fixtures
 class TestDevExample(ModelTestCases.BaseModelTestCase):
     """Test DevExample."""
 
+    model = models.DevExample
+
     @classmethod
     def setUpTestData(cls):
         """Create test data for DevExample Model."""
