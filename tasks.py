@@ -14,6 +14,7 @@ limitations under the License.
 
 import os
 import re
+import shutil
 import sys
 from pathlib import Path
 from time import sleep
@@ -118,6 +119,7 @@ def docker_compose(context, command, **kwargs):
         command (str): Command string to append to the "docker compose ..." command, such as "build", "up", etc.
         **kwargs: Passed through to the context.run() call.
     """
+    _ensure_creds_env_file(context)
     build_env = {
         # Note: 'docker compose logs' will stop following after 60 seconds by default,
         # so we are overriding that by setting this environment variable.
@@ -199,6 +201,18 @@ def build(context, force_rm=False, cache=True):
 
     print(f"Building Nautobot with Python {context.nautobot_dev_example.python_ver}...")
     docker_compose(context, command)
+
+
+def _ensure_creds_env_file(context):
+    """Ensure that the development/creds.env file exists."""
+    if not os.path.exists(os.path.join(context.nautobot_dev_example.compose_dir, "creds.env")):
+        # Warn the user that the creds.env file does not exist and that we are copying the example file to it
+        print("⚠️⚠️ The creds.env file does not exist, using the example file to create it. ⚠️⚠️")
+        # Copy the creds.example.env file to creds.env
+        shutil.copy(
+            os.path.join(context.nautobot_dev_example.compose_dir, "creds.example.env"),
+            os.path.join(context.nautobot_dev_example.compose_dir, "creds.env"),
+        )
 
 
 @task
@@ -606,11 +620,15 @@ def import_db(context, db_name="", input_file="dump.sql"):
 @task(
     help={
         "db-name": "Database name to backup (default: Nautobot database)",
+        "format": (
+            "Database dump format, SQL by default. "
+            "Other valid values for PostgreSQL are: `tar | directory | custom`, for MySQL are: `xml | tab`."
+        ),
         "output-file": "Ouput file, overwrite if exists (default: `dump.sql`)",
         "readable": "Flag to dump database data in more readable format (default: `True`)",
     }
 )
-def backup_db(context, db_name="", output_file="dump.sql", readable=True):
+def backup_db(context, db_name="", format="", output_file="", readable=True):
     """Dump database into `output_file` file from `db` container."""
     start(context, "db")
     _await_healthy_service(context, "db")
@@ -625,15 +643,28 @@ def backup_db(context, db_name="", output_file="dump.sql", readable=True):
             "--skip-extended-insert" if readable else "",
             db_name if db_name else "$MYSQL_DATABASE",
         ]
+
+        if not format:
+            pass
+        elif format == "xml":
+            command += ["--xml"]
+        elif format == "tab":
+            command += ["--tab=/path/to/output/directory", "--fields-terminated-by=,"]
+        else:
+            raise ValueError("Supported formats are: `xml`, `tab`")
     elif _is_compose_included(context, "postgres"):
         command += [
             "pg_dump",
             "--username=$POSTGRES_USER",
             f"--dbname={db_name or '$POSTGRES_DB'}",
+            f"--format={format}" if format else "",
             "--inserts" if readable else "",
         ]
     else:
         raise ValueError("Unsupported database backend.")
+
+    if not output_file:
+        output_file = f"dump.{format or 'sql'}"
 
     command += [
         "'",
@@ -670,6 +701,17 @@ def build_and_check_docs(context):
     """Build documentation to be available within Nautobot."""
     command = "mkdocs build --no-directory-urls --strict"
     run_command(context, command)
+
+    # Check for the existence of a release notes file for the current version if it's not a prerelease.
+    version = context.run("poetry version --short", hide=True)
+    match = re.match(r"^(\d+)\.(\d+)\.\d+$", version.stdout.strip())
+    if match:
+        major = match.group(1)
+        minor = match.group(2)
+        release_notes_file = Path(__file__).parent / "docs" / "admin" / "release_notes" / f"version_{major}.{minor}.md"
+        if not release_notes_file.exists():
+            print(f"Release notes file `version_{major}.{minor}.md` does not exist.")
+            raise Exit(code=1)
 
 
 @task(name="help")
@@ -796,6 +838,18 @@ def yamllint(context):
 
 
 @task
+def markdownlint(context, fix=False):
+    """Lint Markdown files."""
+    # note: at the time of this writing, the `--fix` option is in pending state for pymarkdown on both rules.
+    if fix:
+        command = "pymarkdown fix --recurse docs *.md"
+        run_command(context, command)
+    # fix mode doesn't scan/report issues it can't fix, so always run scan even after fixing
+    command = "pymarkdown scan --recurse docs *.md"
+    run_command(context, command)
+
+
+@task
 def check_migrations(context):
     """Check for missing migrations."""
     command = "nautobot-server makemigrations --dry-run --check"
@@ -886,6 +940,8 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     ruff(context)
     print("Running yamllint...")
     yamllint(context)
+    print("Running markdownlint...")
+    markdownlint(context)
     print("Running poetry check...")
     lock(context, check=True)
     print("Running migrations check...")
