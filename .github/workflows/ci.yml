@@ -151,7 +151,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.8", "3.12"]
+        python-version: ["3.8"]  # 3.12 stable is tested in unittest_report stage.
         db-backend: ["postgresql"]
         nautobot-version: ["stable"]
         include:
@@ -259,7 +259,7 @@ jobs:
         id: "coverage_comment"
         uses: "py-cov-action/python-coverage-comment-action@d1ff8fbb5ff80feedb3faa0f6d7b424f417ad0e1"
         with:
-          GITHUB_TOKEN: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MINIMUM_GREEN: 90
           MINIMUM_ORANGE: 80
           ANNOTATE_MISSING_LINES: true
