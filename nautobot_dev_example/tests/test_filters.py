@@ -1,16 +1,22 @@
 """Test DevExample Filter."""
 
-from django.test import TestCase
+from nautobot.apps.testing import FilterTestCases
 
 from nautobot_dev_example import filters, models
 from nautobot_dev_example.tests import fixtures
 
 
-class DevExampleFilterTestCase(TestCase):
+class DevExampleFilterTestCase(FilterTestCases.FilterTestCase):
     """DevExample Filter Test Case."""
 
     queryset = models.DevExample.objects.all()
     filterset = filters.DevExampleFilterSet
+    generic_filter_tests = (
+        ("id",),
+        ("created",),
+        ("last_updated",),
+        ("name",),
+    )
 
     @classmethod
     def setUpTestData(cls):
