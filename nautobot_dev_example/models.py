@@ -11,9 +11,7 @@ from nautobot.apps.models import PrimaryModel, extras_features
 # how to chose a database model: https://docs.nautobot.com/projects/core/en/stable/plugins/development/#database-models
 # If you want to use the extras_features decorator please reference the following documentation
 # https://docs.nautobot.com/projects/core/en/stable/development/core/model-checklist/#extras-features
-@extras_features(
-    "custom_links", "custom_validators", "export_templates", "graphql", "webhooks"
-)
+@extras_features("custom_links", "custom_validators", "export_templates", "graphql", "webhooks")
 class DevExample(PrimaryModel):  # pylint: disable=too-many-ancestors
     """Base model for Nautobot Dev Example App app."""
 
