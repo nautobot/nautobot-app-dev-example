@@ -1,1 +1,0 @@
-Fixed build failing when `NAUTOBOT_VER` doesn't exist in PyPi, for example when using a branch name.
