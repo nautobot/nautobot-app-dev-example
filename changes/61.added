@@ -1,0 +1,1 @@
+Added Environment variable to control the Celery Beat Log Level.
