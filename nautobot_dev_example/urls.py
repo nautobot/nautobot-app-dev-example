@@ -12,7 +12,9 @@ from nautobot_dev_example import views
 app_name = "nautobot_dev_example"
 router = NautobotUIViewSetRouter()
 
-router.register("devexample", views.DevExampleUIViewSet)
+# The standard is for the route to be the hyphenated version of the model class name plural.
+# for example, ExampleModel would be example-models.
+router.register("dev-examples", views.DevExampleUIViewSet)
 
 
 urlpatterns = [
