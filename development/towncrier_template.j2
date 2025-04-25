@@ -20,7 +20,11 @@ This document describes all new features and changes in the release. The format 
 {% if definitions[category]['showcontent'] %}
 {% for text, values in sections[section][category].items() %}
 {% for item in text.split('\n') %}
+{% if values %}
 - {{ values|join(', ') }} - {{ item.strip() }}
+{% else %}
+- {{ item.strip() }}
+{% endif %}
 {% endfor %}
 {% endfor %}
 
@@ -35,4 +39,3 @@ No significant changes.
 
 {% endif %}
 {% endfor %}
-

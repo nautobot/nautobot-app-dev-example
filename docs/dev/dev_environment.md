@@ -38,7 +38,6 @@ Once you have Poetry and Docker installed you can run the following commands (in
 ```shell
 poetry shell
 poetry install
-cp development/creds.example.env development/creds.env
 invoke build
 invoke start
 ```
@@ -123,9 +122,9 @@ Each command can be executed with `invoke <command>`. All commands support the a
 #### Testing
 
 ```
-  bandit           Run bandit to validate basic static code security analysis.
   ruff             Run ruff to perform code formatting and/or linting.
   pylint           Run pylint code analysis.
+  markdownlint     Run pymarkdown linting.
   tests            Run all tests for this app.
   unittest         Run Django unit tests for the app.
 ```
@@ -160,7 +159,7 @@ This project is set up with a number of **Invoke** tasks consumed as simple CLI 
 
 ### Copy the credentials file for Nautobot
 
-First, you need to create the `development/creds.env` file - it stores a bunch of private information such as passwords and tokens for your local Nautobot install. You can make a copy of the `development/creds.example.env` and modify it to suit you.
+First, you may create/overwrite the `development/creds.env` file - it stores a bunch of private information such as passwords and tokens for your local Nautobot install. You can make a copy of the `development/creds.example.env` and modify it to suit you.
 
 ```shell
 cp development/creds.example.env development/creds.env
@@ -462,7 +461,6 @@ To run an individual test, you can run any or all of the following:
 
 ```bash
 ➜ invoke unittest
-➜ invoke bandit
 ➜ invoke ruff
 ➜ invoke pylint
 ```

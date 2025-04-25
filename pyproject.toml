@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nautobot-dev-example"
-version = "2.0.0"
+version = "2.1.0"
 description = "Nautobot App to demonstrate how to create a Nautobot App."
 authors = ["Network to Code, LLC <opensource@networktocode.com>"]
 license = "Apache-2.0"
@@ -17,22 +17,22 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 packages = [
     { include = "nautobot_dev_example" },
 ]
 include = [
     # Poetry by default will exclude files that are in .gitignore
-    "nautobot_dev_example/static/nautobot_dev_example/docs/**/*",
+    { path = "nautobot_dev_example/static/nautobot_dev_example/docs/**/*", format = ["sdist", "wheel"] },
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.8,<3.13"
 # Used for local development
 nautobot = "^2.0.0"
 
 [tool.poetry.group.dev.dependencies]
-bandit = "*"
 coverage = "*"
 django-debug-toolbar = "*"
 invoke = "*"
@@ -40,20 +40,27 @@ ipython = "*"
 pylint = "*"
 pylint-django = "*"
 pylint-nautobot = "*"
-ruff = "*"
+ruff = "0.5.5"
 yamllint = "*"
 toml = "*"
+# Python implementation of markdownlint
+pymarkdownlnt = [
+    {version = "0.9.26", python = "~3.8.0"},
+    {version = "~0.9.29", python = ">=3.9,<3.13"},
+]
 Markdown = "*"
-# Rendering docs to HTML
-mkdocs = "1.5.2"
-# Material for MkDocs theme
-mkdocs-material = "9.1.15"
 # Render custom markdown for version added/changed/remove notes
-mkdocs-version-annotations = "1.0.0"
+markdown-version-annotations = "1.0.1"
+# Rendering docs to HTML
+mkdocs = "1.6.0"
+# Material for MkDocs theme
+mkdocs-material = "9.5.32"
 # Automatic documentation from sources, for MkDocs
-mkdocstrings = "0.22.0"
-mkdocstrings-python = "1.5.2"
-towncrier = "~23.6.0"
+mkdocstrings = "0.25.2"
+mkdocstrings-python = "1.10.8"
+mkdocs-autorefs = "1.2.0"
+griffe = "1.1.1"
+towncrier = ">=23.6.0,<=24.8.0"
 to-json-schema = "*"
 jsonschema = "*"
 
@@ -63,16 +70,17 @@ all = [
 
 [tool.pylint.master]
 # Include the pylint_django plugin to avoid spurious warnings about Django patterns
-load-plugins="pylint_django, pylint_nautobot"
-ignore=".venv"
+load-plugins = "pylint_django, pylint_nautobot"
+ignore = ".venv"
 
 [tool.pylint.basic]
 # No docstrings required for private methods (Pylint default), or for test_ functions, or for inner Meta classes.
-no-docstring-rgx="^(_|test_|Meta$)"
+no-docstring-rgx = "^(_|test_|Meta$)"
 
 [tool.pylint.messages_control]
 disable = """,
-    line-too-long
+    line-too-long,
+    too-many-ancestors,
 """
 
 [tool.pylint.miscellaneous]
@@ -95,27 +103,26 @@ target-version = "py38"
 select = [
     "D",  # pydocstyle
     "F", "E", "W",  # flake8
-    "PL",  # pylint
     "S",  # bandit
     "I",  # isort
 ]
 ignore = [
     # warning: `one-blank-line-before-class` (D203) and `no-blank-line-before-class` (D211) are incompatible.
-    "D203",  # 1 blank line required before class docstring
+    "D203", # 1 blank line required before class docstring
 
     # D212 is enabled by default in google convention, and complains if we have a docstring like:
     # """
     # My docstring is on the line after the opening quotes instead of on the same line as them.
     # """
     # We've discussed and concluded that we consider this to be a valid style choice.
-    "D212",  # Multi-line docstring summary should start at the first line
-    "D213",  # Multi-line docstring summary should start at the second line
+    "D212", # Multi-line docstring summary should start at the first line
+    "D213", # Multi-line docstring summary should start at the second line
 
     # Produces a lot of issues in the current codebase.
-    "D401",  # First line of docstring should be in imperative mood
-    "D407",  # Missing dashed underline after section
-    "D416",  # Section name ends in colon
-    "E501",  # Line too long
+    "D401", # First line of docstring should be in imperative mood
+    "D407", # Missing dashed underline after section
+    "D416", # Section name ends in colon
+    "E501", # Line too long
 ]
 
 [tool.ruff.lint.pydocstyle]
@@ -129,6 +136,74 @@ convention = "google"
     "D",
     "S"
 ]
+
+[tool.coverage.run]
+disable_warnings = ["already-imported"]
+relative_files = true
+omit = [
+    # Skip Tests
+    "*/tests/*",
+]
+include = [
+    "nautobot_dev_example/*",
+]
+
+[tool.pymarkdown]
+# Seems to be not support for whitelisting rules: https://github.com/jackdewinter/pymarkdown/issues/1396
+plugins.md001.enabled = false
+plugins.md002.enabled = false
+plugins.md003.enabled = false
+plugins.md004.enabled = false
+plugins.md005.enabled = false
+plugins.md006.enabled = false
+plugins.md007.enabled = false
+plugins.md008.enabled = false
+plugins.md009.enabled = false
+plugins.md010.enabled = false
+plugins.md011.enabled = false
+plugins.md012.enabled = false
+plugins.md013.enabled = false
+plugins.md014.enabled = false
+plugins.md015.enabled = false
+plugins.md016.enabled = false
+plugins.md017.enabled = false
+plugins.md018.enabled = false
+plugins.md019.enabled = false
+plugins.md020.enabled = false
+plugins.md021.enabled = false
+plugins.md022.enabled = false
+plugins.md023.enabled = false
+plugins.md024.enabled = false
+plugins.md025.enabled = false
+plugins.md026.enabled = false
+plugins.md027.enabled = false
+plugins.md028.enabled = false
+plugins.md029.enabled = false
+plugins.md030.enabled = false
+plugins.md031.enabled = false
+plugins.md032.enabled = true # blanks-around-lists
+plugins.md033.enabled = false
+plugins.md034.enabled = false
+plugins.md035.enabled = false
+plugins.md036.enabled = false
+plugins.md037.enabled = false
+plugins.md038.enabled = false
+plugins.md039.enabled = false
+plugins.md040.enabled = false
+plugins.md041.enabled = false
+plugins.md042.enabled = false
+plugins.md043.enabled = false
+plugins.md044.enabled = false
+plugins.md045.enabled = false
+plugins.md046.enabled = false
+plugins.md047.enabled = false
+plugins.md048.enabled = false
+plugins.md049.enabled = false
+plugins.md050.enabled = false
+plugins.pml100.enabled = false
+plugins.pml101.enabled = true # list-anchored-indent
+plugins.pml102.enabled = false
+plugins.pml103.enabled = false
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
