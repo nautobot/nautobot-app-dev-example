@@ -24,7 +24,7 @@ packages = [
 ]
 include = [
     # Poetry by default will exclude files that are in .gitignore
-    { path = "nautobot_dev_example/static/nautobot_dev_example/docs/**/*", format = ["sdist", "wheel"] },
+    { path = "nautobot_dev_example/static/nautobot_dev_example/docs/**/*", format = ["sdist", "wheel"] }
 ]
 
 [tool.poetry.dependencies]
