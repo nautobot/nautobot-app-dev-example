@@ -6,6 +6,12 @@ This document describes all new features and changes in the release. The format 
 
 - Lots of housekeeping and preparation for app cookiecutter v2.5.0.
 
+## [v2.1.1 (2025-04-25)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v2.1.1)
+
+### Fixed
+
+- [#77](https://github.com/nautobot/nautobot-app-dev-example/issues/77) - Fixed release workflow.
+
 ## [v2.1.0 (2025-04-24)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v2.1.0)
 
 ### Added
