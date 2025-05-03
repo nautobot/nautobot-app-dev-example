@@ -2,7 +2,8 @@
 name: 🐛 Bug Report
 about: Report a reproducible bug in the current release of nautobot-dev-example
 title: "[BUG]"
-labels: bug
+labels:
+  - "type: bug"
 ---
 
 ### Environment
