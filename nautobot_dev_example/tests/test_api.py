@@ -11,9 +11,6 @@ class DevExampleAPIViewTest(APIViewTestCases.APIViewTestCase):
     """Test the API viewsets for DevExample."""
 
     model = models.DevExample
-    # Any choice fields will require the choices_fields to be set
-    # to the field names in the model that are choice fields.
-    choices_fields = ()
 
     @classmethod
     def setUpTestData(cls):
