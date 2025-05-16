@@ -958,7 +958,7 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     validate_app_config(context)
     if not lint_only:
         print("Running unit tests...")
-        unittest(context, failfast=failfast, keepdb=keepdb, coverage=True)
+        unittest(context, failfast=failfast, keepdb=keepdb, coverage=True, skip_docs_build=True)
         unittest_coverage(context)
         coverage_lcov(context)
     print("All tests have passed!")

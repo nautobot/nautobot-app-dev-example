@@ -18,7 +18,7 @@ class DevExampleAPIViewTest(APIViewTestCases.APIViewTestCase):
         super().setUpTestData()
         # Create 3 objects for the generic API test cases.
         fixtures.create_devexample()
-        # Provided data for 3 objects to be created.
+        # Create 3 objects for the api test cases.
         cls.create_data = [
             {
                 "name": "API Test One",
