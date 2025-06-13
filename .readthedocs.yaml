@@ -13,7 +13,7 @@ build:
     python: "3.10"
   jobs:
     pre_build:
-      - ./docs/insert-analytics.sh
+      - "./docs/insert-analytics.sh"
 
 mkdocs:
   configuration: "mkdocs.yml"
