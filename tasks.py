@@ -1167,7 +1167,9 @@ def check_compatibility_matrix(context, fix=False):
         raise Exit("Nautobot version not found in the pyproject.toml file.")
     nautobot_version_constraint = nautobot_version_match.group(1) or nautobot_version_match.group(2)
     # Convert the Nautobot version constraint into a minimum and maximum version
-    nautobot_constraint_min_version, nautobot_constraint_max_version = parse_poetry_version_constraint(nautobot_version_constraint)
+    nautobot_constraint_min_version, nautobot_constraint_max_version = parse_poetry_version_constraint(
+        nautobot_version_constraint
+    )
 
     # Check if the last line of the table contains the current major/minor version of the app
     current_major_minor_version = ".".join(app_version.split(".")[:2])
@@ -1186,7 +1188,10 @@ def check_compatibility_matrix(context, fix=False):
     # Get the Nautobot version from the last line of the table
     nautobot_min_version = last_line.split("|")[2].strip()
     nautobot_max_version = last_line.split("|")[3].strip()
-    if nautobot_min_version != nautobot_constraint_min_version or nautobot_max_version != nautobot_constraint_max_version:
+    if (
+        nautobot_min_version != nautobot_constraint_min_version
+        or nautobot_max_version != nautobot_constraint_max_version
+    ):
         if not fix:
             raise Exit(
                 f"Compatibility matrix for the current Nautobot version {nautobot_version_constraint} is not up to date. "
@@ -1194,7 +1199,9 @@ def check_compatibility_matrix(context, fix=False):
             )
         # Update the last line of the table with the current Nautobot version
         print("Updating compatibility matrix with the current Nautobot version...")
-        lines[-1] = f"| {current_major_minor_version}.X | {nautobot_constraint_min_version} | {nautobot_constraint_max_version} |\n"
+        lines[-1] = (
+            f"| {current_major_minor_version}.X | {nautobot_constraint_min_version} | {nautobot_constraint_max_version} |\n"
+        )
 
     if fix:
         # Write the updated lines back to the compatibility matrix file
