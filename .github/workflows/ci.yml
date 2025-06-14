@@ -94,7 +94,7 @@ jobs:
           poetry-version: "1.8.5"
       - name: "Linting: markdownlint"
         run: "poetry run invoke markdownlint"
-  check-compatibiility-matrix:
+  check-compatibility-matrix:
     runs-on: "ubuntu-22.04"
     env:
       INVOKE_NAUTOBOT_DEV_EXAMPLE_LOCAL: "True"
