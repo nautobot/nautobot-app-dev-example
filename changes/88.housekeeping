@@ -1,1 +1,1 @@
-Added a checker for the Compatibility Matrix.
+Added a new invoke command to check the accuracy of the Compatibility Matrix documentation file and optionally fix it automatically.
