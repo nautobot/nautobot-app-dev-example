@@ -32,7 +32,8 @@ Every minor version release should refresh `poetry.lock`, so that it lists the m
 ### Update Documentation
 
 If there are any changes to the compatibility matrix (such as a bump in the minimum supported Nautobot version), update it accordingly.
-This can now be done using the `inv check-compatibility-matrix --fix`.
+
+This can be updated automatically using `invoke check-compatibility-matrix --fix`.
 
 Commit any resulting changes from the following sections to the documentation before proceeding with the release.
 
