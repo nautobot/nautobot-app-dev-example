@@ -991,7 +991,6 @@ def validate_app_config(context):
 
 def parse_poetry_version_constraint(constraint):
     """Parse a Poetry version constraint and return (min_version, max_version) as strings."""
-    import re
 
     def max_version(version, part):
         # For display, e.g. 2.0.0 -> 2.99.99 for major, 2.4.0 -> 2.4.99 for minor
