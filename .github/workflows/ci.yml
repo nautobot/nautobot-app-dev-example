@@ -114,6 +114,7 @@ jobs:
       - "poetry"
       - "yamllint"
       - "markdownlint"
+      - "check-compatibility-matrix"
     runs-on: "ubuntu-22.04"
     strategy:
       fail-fast: true
