@@ -6,7 +6,7 @@ This document describes all new features and changes in the release `1.0`. The f
 
 - Major features or milestones
 - Achieved in this `x.y` release
-- Changes to compatibility with Nautobot and/or other apps, libraries etc.
+- Changes to compatibility with Nautobot and/or other plugins, libraries etc.
 
 ## [v1.0.1 (2024-07-10)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v1.0.1)
 
