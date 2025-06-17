@@ -1,6 +1,6 @@
 ---
-nautobot_dev_example:
-  project_name: "nautobot-dev-example"
+my_plugin:
+  project_name: "my-plugin"
   nautobot_ver: "2.0.0"
   local: false
   python_ver: "3.11"

@@ -56,7 +56,6 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
-lcov.info
 
 # Translations
 *.mo
@@ -307,4 +306,4 @@ invoke.yml
 public
 /compose.yaml
 /dump.sql
-/nautobot_dev_example/static/nautobot_dev_example/docs
+/my_plugin/static/my_plugin/docs

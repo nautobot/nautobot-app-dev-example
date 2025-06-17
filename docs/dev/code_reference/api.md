@@ -1,5 +1,5 @@
 # Nautobot Dev Example App API Package
 
-::: nautobot_dev_example.api
+::: my_plugin.api
     options:
         show_submodules: True
