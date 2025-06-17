@@ -1,1 +1,1 @@
-::: my_plugin
+::: nautobot_dev_example

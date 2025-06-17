@@ -1,12 +1,12 @@
 ---
 name: 🐛 Bug Report
-about: Report a reproducible bug in the current release of my-plugin
+about: Report a reproducible bug in the current release of nautobot-dev-example
 ---
 
 ### Environment
 * Python version:  <!-- Example: 3.11.4 -->
 * Nautobot version:  <!-- Example: 2.0.0 -->
-* my-plugin version:  <!-- Example: 1.0.0 -->
+* nautobot-dev-example version:  <!-- Example: 1.0.0 -->
 
 <!-- What did you expect to happen? -->
 ### Expected Behavior

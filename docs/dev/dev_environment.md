@@ -14,13 +14,13 @@ This is a quick reference guide if you're already familiar with the development 
 The [Invoke](http://www.pyinvoke.org/) library is used to provide some helper commands based on the environment. There are a few configuration parameters which can be passed to Invoke to override the default configuration:
 
 - `nautobot_ver`: the version of Nautobot to use as a base for any built docker containers (default: 2.0.0)
-- `project_name`: the default docker compose project name (default: `my-plugin`)
+- `project_name`: the default docker compose project name (default: `nautobot-dev-example`)
 - `python_ver`: the version of Python to use as a base for any built docker containers (default: 3.11)
 - `local`: a boolean flag indicating if invoke tasks should be run on the host or inside the docker containers (default: False, commands will be run in docker containers)
 - `compose_dir`: the full path to a directory containing the project compose files
 - `compose_files`: a list of compose files applied in order (see [Multiple Compose files](https://docs.docker.com/compose/extends/#multiple-compose-files) for more information)
 
-Using **Invoke** these configuration options can be overridden using [several methods](https://docs.pyinvoke.org/en/stable/concepts/configuration.html). Perhaps the simplest is setting an environment variable `INVOKE_MY_PLUGIN_VARIABLE_NAME` where `VARIABLE_NAME` is the variable you are trying to override. The only exception is `compose_files`, because it is a list it must be overridden in a YAML file. There is an example `invoke.yml` (`invoke.example.yml`) in this directory which can be used as a starting point.
+Using **Invoke** these configuration options can be overridden using [several methods](https://docs.pyinvoke.org/en/stable/concepts/configuration.html). Perhaps the simplest is setting an environment variable `INVOKE_NAUTOBOT_DEV_EXAMPLE_VARIABLE_NAME` where `VARIABLE_NAME` is the variable you are trying to override. The only exception is `compose_files`, because it is a list it must be overridden in a YAML file. There is an example `invoke.yml` (`invoke.example.yml`) in this directory which can be used as a starting point.
 
 ### Docker Development Environment
 
@@ -29,15 +29,15 @@ Using **Invoke** these configuration options can be overridden using [several me
 
 This project is managed by [Python Poetry](https://python-poetry.org/) and has a few requirements to setup your development environment:
 
-1. Install Poetry, see the [Poetry Documentation](https://python-poetry.org/docs/#installation) for your operating system.
+1. Install Poetry, see the [Poetry documentation](https://python-poetry.org/docs/#installation) for your operating system.
 2. Install Docker, see the [Docker documentation](https://docs.docker.com/get-docker/) for your operating system.
+3. Install Docker-compose, see the [Docker-compose documentation](https://github.com/docker/compose) for your operation system.
 
 Once you have Poetry and Docker installed you can run the following commands (in the root of the repository) to install all other development dependencies in an isolated Python virtual environment:
 
 ```shell
 poetry shell
 poetry install
-cp development/creds.example.env development/creds.env
 invoke build
 invoke start
 ```
@@ -55,7 +55,7 @@ To either stop or destroy the development environment use the following options.
 
 ```yaml
 ---
-my_plugin:
+nautobot_dev_example:
   local: true
 ```
 
@@ -73,7 +73,7 @@ nautobot-server migrate
 !!! note
     If you want to develop on the latest develop branch of Nautobot, run the following command: `poetry add --optional git+https://github.com/nautobot/nautobot@develop`. After the `@` symbol must match either a branch or a tag.
 
-You can now run `nautobot-server` commands as you would from the [Nautobot documentation](https://nautobot.readthedocs.io/en/latest/) for example to start the development server:
+You can now run `nautobot-server` commands as you would from the [Nautobot documentation](https://docs.nautobot.com/projects/core/en/stable/user-guide/administration/tools/nautobot-server/) for example to start the development server:
 
 ```shell
 nautobot-server runserver 0.0.0.0:8080 --insecure
@@ -122,13 +122,11 @@ Each command can be executed with `invoke <command>`. All commands support the a
 #### Testing
 
 ```
-  bandit           Run bandit to validate basic static code security analysis.
-  black            Run black to check that Python files adhere to its style standards.
-  flake8           Run flake8 to check that Python files adhere to its style standards.
-  pydocstyle       Run pydocstyle to validate docstring formatting adheres to NTC defined standards.
+  ruff             Run ruff to perform code formatting and/or linting.
   pylint           Run pylint code analysis.
-  tests            Run all tests for this plugin.
-  unittest         Run Django unit tests for the plugin.
+  markdownlint     Run pymarkdown linting.
+  tests            Run all tests for this app.
+  unittest         Run Django unit tests for the app.
 ```
 
 ## Project Overview
@@ -161,7 +159,7 @@ This project is set up with a number of **Invoke** tasks consumed as simple CLI 
 
 ### Copy the credentials file for Nautobot
 
-First, you need to create the `development/creds.env` file - it stores a bunch of private information such as passwords and tokens for your local Nautobot install. You can make a copy of the `development/creds.example.env` and modify it to suit you.
+First, you may create/overwrite the `development/creds.env` file - it stores a bunch of private information such as passwords and tokens for your local Nautobot install. You can make a copy of the `development/creds.example.env` and modify it to suit you.
 
 ```shell
 cp development/creds.example.env development/creds.env
@@ -179,7 +177,7 @@ The first thing you need to do is build the necessary Docker image for Nautobot 
 #14 exporting layers
 #14 exporting layers 1.2s done
 #14 writing image sha256:2d524bc1665327faa0d34001b0a9d2ccf450612bf8feeb969312e96a2d3e3503 done
-#14 naming to docker.io/my-plugin/nautobot:2.0.0-py3.11 done
+#14 naming to docker.io/nautobot-dev-example/nautobot:2.0.0-py3.11 done
 ```
 
 ### Invoke - Starting the Development Environment
@@ -190,18 +188,18 @@ Next, you need to start up your Docker containers.
 ➜ invoke start
 Starting Nautobot in detached mode...
 Running docker-compose command "up --detach"
-Creating network "my_plugin_default" with the default driver
-Creating volume "my_plugin_postgres_data" with default driver
-Creating my_plugin_redis_1 ...
-Creating my_plugin_docs_1  ...
-Creating my_plugin_postgres_1 ...
-Creating my_plugin_postgres_1 ... done
-Creating my_plugin_redis_1    ... done
-Creating my_plugin_nautobot_1 ...
-Creating my_plugin_docs_1     ... done
-Creating my_plugin_nautobot_1 ... done
-Creating my_plugin_worker_1   ...
-Creating my_plugin_worker_1   ... done
+Creating network "nautobot_dev_example_default" with the default driver
+Creating volume "nautobot_dev_example_postgres_data" with default driver
+Creating nautobot_dev_example_redis_1 ...
+Creating nautobot_dev_example_docs_1  ...
+Creating nautobot_dev_example_postgres_1 ...
+Creating nautobot_dev_example_postgres_1 ... done
+Creating nautobot_dev_example_redis_1    ... done
+Creating nautobot_dev_example_nautobot_1 ...
+Creating nautobot_dev_example_docs_1     ... done
+Creating nautobot_dev_example_nautobot_1 ... done
+Creating nautobot_dev_example_worker_1   ...
+Creating nautobot_dev_example_worker_1   ... done
 Docker Compose is now in the Docker CLI, try `docker compose up`
 ```
 
@@ -210,11 +208,11 @@ This will start all of the Docker containers used for hosting Nautobot. You shou
 ```bash
 ➜ docker ps
 ****CONTAINER ID   IMAGE                            COMMAND                  CREATED          STATUS          PORTS                                       NAMES
-ee90fbfabd77   my-plugin/nautobot:2.0.0-py3.11  "nautobot-server rqw…"   16 seconds ago   Up 13 seconds                                               my_plugin_worker_1
-b8adb781d013   my-plugin/nautobot:2.0.0-py3.11  "/docker-entrypoint.…"   20 seconds ago   Up 15 seconds   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp   my_plugin_nautobot_1
-d64ebd60675d   my-plugin/nautobot:2.0.0-py3.11  "mkdocs serve -v -a …"   25 seconds ago   Up 18 seconds   0.0.0.0:8001->8080/tcp, :::8001->8080/tcp   my_plugin_docs_1
-e72d63129b36   postgres:13-alpine               "docker-entrypoint.s…"   25 seconds ago   Up 19 seconds   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   my_plugin_postgres_1
-96c6ff66997c   redis:6-alpine                   "docker-entrypoint.s…"   25 seconds ago   Up 21 seconds   0.0.0.0:6379->6379/tcp, :::6379->6379/tcp   my_plugin_redis_1
+ee90fbfabd77   nautobot-dev-example/nautobot:2.0.0-py3.11  "nautobot-server rqw…"   16 seconds ago   Up 13 seconds                                               nautobot_dev_example_worker_1
+b8adb781d013   nautobot-dev-example/nautobot:2.0.0-py3.11  "/docker-entrypoint.…"   20 seconds ago   Up 15 seconds   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp   nautobot_dev_example_nautobot_1
+d64ebd60675d   nautobot-dev-example/nautobot:2.0.0-py3.11  "mkdocs serve -v -a …"   25 seconds ago   Up 18 seconds   0.0.0.0:8001->8080/tcp, :::8001->8080/tcp   nautobot_dev_example_docs_1
+e72d63129b36   postgres:13-alpine               "docker-entrypoint.s…"   25 seconds ago   Up 19 seconds   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   nautobot_dev_example_postgres_1
+96c6ff66997c   redis:6-alpine                   "docker-entrypoint.s…"   25 seconds ago   Up 21 seconds   0.0.0.0:6379->6379/tcp, :::6379->6379/tcp   nautobot_dev_example_redis_1
 ```
 
 Once the containers are fully up, you should be able to open up a web browser, and view:
@@ -258,27 +256,27 @@ The last command to know for now is `invoke stop`.
 ➜ invoke stop
 Stopping Nautobot...
 Running docker-compose command "down"
-Stopping my_plugin_worker_1   ...
-Stopping my_plugin_nautobot_1 ...
-Stopping my_plugin_docs_1     ...
-Stopping my_plugin_redis_1    ...
-Stopping my_plugin_postgres_1 ...
-Stopping my_plugin_worker_1   ... done
-Stopping my_plugin_nautobot_1 ... done
-Stopping my_plugin_postgres_1 ... done
-Stopping my_plugin_redis_1    ... done
-Stopping my_plugin_docs_1     ... done
-Removing my_plugin_worker_1   ...
-Removing my_plugin_nautobot_1 ...
-Removing my_plugin_docs_1     ...
-Removing my_plugin_redis_1    ...
-Removing my_plugin_postgres_1 ...
-Removing my_plugin_postgres_1 ... done
-Removing my_plugin_docs_1     ... done
-Removing my_plugin_worker_1   ... done
-Removing my_plugin_redis_1    ... done
-Removing my_plugin_nautobot_1 ... done
-Removing network my_plugin_default
+Stopping nautobot_dev_example_worker_1   ...
+Stopping nautobot_dev_example_nautobot_1 ...
+Stopping nautobot_dev_example_docs_1     ...
+Stopping nautobot_dev_example_redis_1    ...
+Stopping nautobot_dev_example_postgres_1 ...
+Stopping nautobot_dev_example_worker_1   ... done
+Stopping nautobot_dev_example_nautobot_1 ... done
+Stopping nautobot_dev_example_postgres_1 ... done
+Stopping nautobot_dev_example_redis_1    ... done
+Stopping nautobot_dev_example_docs_1     ... done
+Removing nautobot_dev_example_worker_1   ...
+Removing nautobot_dev_example_nautobot_1 ...
+Removing nautobot_dev_example_docs_1     ...
+Removing nautobot_dev_example_redis_1    ...
+Removing nautobot_dev_example_postgres_1 ...
+Removing nautobot_dev_example_postgres_1 ... done
+Removing nautobot_dev_example_docs_1     ... done
+Removing nautobot_dev_example_worker_1   ... done
+Removing nautobot_dev_example_redis_1    ... done
+Removing nautobot_dev_example_nautobot_1 ... done
+Removing network nautobot_dev_example_default
 ```
 
 This will safely shut down all of your running Docker containers for this project. When you are ready to spin containers back up, it is as simple as running `invoke start` again [as seen previously](#invoke-starting-the-development-environment).
@@ -290,9 +288,9 @@ This will safely shut down all of your running Docker containers for this projec
 
 Your environment should now be fully setup, all necessary Docker containers are created and running, and you're logged into Nautobot in your web browser. Now what?
 
-Now you can start developing your plugin in the project folder!
+Now you can start developing your app in the project folder!
 
-The magic here is the root directory is mounted inside your Docker containers when built and ran, so **any** changes made to the files in here are directly updated to the Nautobot plugin code running in Docker. This means that as you modify the code in your plugin folder, the changes will be instantly updated in Nautobot.
+The magic here is the root directory is mounted inside your Docker containers when built and ran, so **any** changes made to the files in here are directly updated to the Nautobot app code running in Docker. This means that as you modify the code in your app folder, the changes will be instantly updated in Nautobot.
 
 !!! warning
 	There are a few exceptions to this, as outlined in the section [To Rebuild or Not To Rebuild](#to-rebuild-or-not-to-rebuild).
@@ -316,7 +314,7 @@ When trying to debug an issue, one helpful thing you can look at are the logs wi
 !!! info
     Want to limit the log output even further? Use the `--tail <#>` command line argument in conjunction with `-f`.
 
-So for example, our plugin is named `my-plugin`, the command would most likely be `docker logs my_plugin_nautobot_1 -f`. You can find the name of all running containers via `docker ps`.
+So for example, our app is named `nautobot-dev-example`, the command would most likely be `docker logs nautobot_dev_example_nautobot_1 -f`. You can find the name of all running containers via `docker ps`.
 
 If you want to view the logs specific to the worker container, simply use the name of that container instead.
 
@@ -342,7 +340,7 @@ Once completed, the new/updated environment variables should now be live.
 
 ### Installing Additional Python Packages
 
-If you want your plugin to leverage another available Nautobot plugin or another Python package, you can easily add them into your Docker environment.
+If you want your app to leverage another available Nautobot app or another Python package, you can easily add them into your Docker environment.
 
 ```bash
 ➜ poetry shell
@@ -357,18 +355,18 @@ Once the dependencies are resolved, stop the existing containers, rebuild the Do
 ➜ invoke start
 ```
 
-### Installing Additional Nautobot Plugins
+### Installing Additional Nautobot Apps
 
-Let's say for example you want the new plugin you're creating to integrate into Slack. To do this, you will want to integrate into the existing Nautobot ChatOps Plugin.
+Let's say for example you want the new app you're creating to integrate into Slack. To do this, you will want to integrate into the existing Nautobot ChatOps App.
 
 ```bash
 ➜ poetry shell
 ➜ poetry add nautobot-chatops
 ```
 
-Once you activate the virtual environment via Poetry, you then tell Poetry to install the new plugin.
+Once you activate the virtual environment via Poetry, you then tell Poetry to install the new app.
 
-Before you continue, you'll need to update the file `development/nautobot_config.py` accordingly with the name of the new plugin under `PLUGINS` and any relevant settings as necessary for the plugin under `PLUGINS_CONFIG`. Since you're modifying the underlying OS (not just Django files), you need to rebuild the image. This is a similar process to updating environment variables, which was explained earlier.
+Before you continue, you'll need to update the file `development/nautobot_config.py` accordingly with the name of the new app under `PLUGINS` and any relevant settings as necessary for the app under `PLUGINS_CONFIG`. Since you're modifying the underlying OS (not just Django files), you need to rebuild the image. This is a similar process to updating environment variables, which was explained earlier.
 
 ```bash
 ➜ invoke stop
@@ -376,7 +374,7 @@ Before you continue, you'll need to update the file `development/nautobot_config
 ➜ invoke start
 ```
 
-Once the containers are up and running, you should now see the new plugin installed in your Nautobot instance.
+Once the containers are up and running, you should now see the new app installed in your Nautobot instance.
 
 !!! note
     You can even launch an `ngrok` service locally on your laptop, pointing to port 8080 (such as for chatops development), and it will point traffic directly to your Docker images.
@@ -386,10 +384,10 @@ Once the containers are up and running, you should now see the new plugin instal
 To update the Python version, you can update it within `tasks.py`.
 
 ```python
-namespace = Collection("my_plugin")
+namespace = Collection("nautobot_dev_example")
 namespace.configure(
     {
-        "my_plugin": {
+        "nautobot_dev_example": {
             ...
             "python_ver": "3.11",
 	    ...
@@ -398,17 +396,17 @@ namespace.configure(
 )
 ```
 
-Or set the `INVOKE_MY_PLUGIN_PYTHON_VER` variable.
+Or set the `INVOKE_NAUTOBOT_DEV_EXAMPLE_PYTHON_VER` variable.
 
 ### Updating Nautobot Version
 
 To update the Nautobot version, you can update it within `tasks.py`.
 
 ```python
-namespace = Collection("my_plugin")
+namespace = Collection("nautobot_dev_example")
 namespace.configure(
     {
-        "my_plugin": {
+        "nautobot_dev_example": {
             ...
             "nautobot_ver": "2.0.0",
 	    ...
@@ -417,7 +415,7 @@ namespace.configure(
 )
 ```
 
-Or set the `INVOKE_MY_PLUGIN_NAUTOBOT_VER` variable.
+Or set the `INVOKE_NAUTOBOT_DEV_EXAMPLE_NAUTOBOT_VER` variable.
 
 ## Other Miscellaneous Commands To Know
 
@@ -453,7 +451,7 @@ This is the same as running:
 
 ### Tests
 
-To run tests against your code, you can run all of the tests that TravisCI runs against any new PR with:
+To run tests against your code, you can run all of the tests that the CI runs against any new PR with:
 
 ```bash
 ➜ invoke tests
@@ -463,9 +461,24 @@ To run an individual test, you can run any or all of the following:
 
 ```bash
 ➜ invoke unittest
-➜ invoke bandit
-➜ invoke black
-➜ invoke flake8
-➜ invoke pydocstyle
+➜ invoke ruff
 ➜ invoke pylint
 ```
+
+### App Configuration Schema
+
+In the package source, there is the `nautobot_dev_example/app-config-schema.json` file, conforming to the [JSON Schema](https://json-schema.org/) format. This file is used to validate the configuration of the app in CI pipelines.
+
+If you make changes to `PLUGINS_CONFIG` or the configuration schema, you can run the following command to validate the schema:
+
+```bash
+invoke validate-app-config
+```
+
+To generate the `app-config-schema.json` file based on the current `PLUGINS_CONFIG` configuration, run the following command:
+
+```bash
+invoke generate-app-config-schema
+```
+
+This command can only guess the schema, so it's up to the developer to manually update the schema as needed.
