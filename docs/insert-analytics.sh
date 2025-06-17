@@ -3,6 +3,7 @@
 # !!! IMPORTANT - READ THIS FIRST !!!
 # This script is to be used ONLY when building PUBLIC documentation hosted
 # on ReadTheDocs! It's executed in the pipeline defined in .readthedocs.yaml
+# and inserts a Google Tag Manager code for web analytics.
 # Do NOT reuse this to insert analytics code in your development environments
 # or into the release process (i.e. built packages).
 
