@@ -4,9 +4,9 @@
         "full_name": "Network to Code, LLC",
         "email": "opensource@networktocode.com",
         "github_org": "nautobot",
-        "plugin_name": "my_plugin",
+        "app_name": "nautobot_dev_example",
         "verbose_name": "Nautobot Dev Example App",
-        "plugin_slug": "my-plugin",
+        "app_slug": "nautobot-dev-example",
         "project_slug": "nautobot-app-dev-example",
         "repo_url": "https://github.com/nautobot/nautobot-app-dev-example",
         "base_url": "dev-example",
@@ -21,11 +21,14 @@
         "_drift_manager": {
             "template": "https://github.com/nautobot/cookiecutter-nautobot-app.git",
             "template_dir": "nautobot-app",
-            "template_ref": "v1.2",
+            "template_ref": "refs/tags/nautobot-app-v2.5.0",
             "cookie_dir": "",
             "branch_prefix": "drift-manager",
             "pull_request_strategy": "create",
-            "post_actions": [],
+            "post_actions": [
+                "ruff",
+                "poetry"
+            ],
             "draft": false,
             "baked_commit_ref": ""
         }
