@@ -1,16 +1,15 @@
 """Nautobot development configuration file."""
-
 import os
 import sys
 
 from nautobot.core.settings import *  # noqa: F403  # pylint: disable=wildcard-import,unused-wildcard-import
-from nautobot.core.settings_funcs import is_truthy
+from nautobot.core.settings_funcs import is_truthy, parse_redis_connection
 
 #
 # Debug
 #
 
-DEBUG = is_truthy(os.getenv("NAUTOBOT_DEBUG", "false"))
+DEBUG = is_truthy(os.getenv("NAUTOBOT_DEBUG", False))
 _TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
 if DEBUG and not _TESTING:
@@ -50,7 +49,7 @@ DATABASES = {
         "PORT": os.getenv(
             "NAUTOBOT_DB_PORT", default_db_settings[nautobot_db_engine]["NAUTOBOT_DB_PORT"]
         ),  # Database port, default to postgres
-        "CONN_MAX_AGE": int(os.getenv("NAUTOBOT_DB_TIMEOUT", "300")),  # Database timeout
+        "CONN_MAX_AGE": int(os.getenv("NAUTOBOT_DB_TIMEOUT", 300)),  # Database timeout
         "ENGINE": nautobot_db_engine,
     }
 }
@@ -64,8 +63,19 @@ if DATABASES["default"]["ENGINE"] == "django.db.backends.mysql":
 #
 
 # The django-redis cache is used to establish concurrent locks using Redis.
-# Inherited from nautobot.core.settings
-# CACHES = {....}
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": parse_redis_connection(redis_database=0),
+        "TIMEOUT": 300,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
+# Redis Cacheops
+CACHEOPS_REDIS = parse_redis_connection(redis_database=1)
 
 #
 # Celery settings are not defined here because they can be overloaded with
@@ -85,11 +95,11 @@ if not _TESTING:
         "disable_existing_loggers": False,
         "formatters": {
             "normal": {
-                "format": "%(asctime)s.%(msecs)03d %(levelname)-7s %(name)s : %(message)s",
+                "format": "%(asctime)s.%(msecs)03d %(levelname)-7s %(name)s :\n  %(message)s",
                 "datefmt": "%H:%M:%S",
             },
             "verbose": {
-                "format": "%(asctime)s.%(msecs)03d %(levelname)-7s %(name)-20s %(filename)-15s %(funcName)30s() : %(message)s",
+                "format": "%(asctime)s.%(msecs)03d %(levelname)-7s %(name)-20s %(filename)-15s %(funcName)30s() :\n  %(message)s",
                 "datefmt": "%H:%M:%S",
             },
         },
@@ -119,12 +129,12 @@ if not _TESTING:
 #
 
 # Enable installed Apps. Add the name of each App to the list.
-PLUGINS = ["nautobot_dev_example"]
+PLUGINS = ["my_plugin"]
 
 # Apps configuration settings. These settings are used by various Apps that the user may have installed.
 # Each key in the dictionary is the name of an installed App and its value is a dictionary of settings.
 # PLUGINS_CONFIG = {
-#     'nautobot_dev_example': {
+#     'my_plugin': {
 #         'foo': 'bar',
 #         'buzz': 'bazz'
 #     }

@@ -7,7 +7,7 @@ labels:
 
 ### Environment
 * Nautobot version:  <!-- Example: 2.0.0 -->
-* nautobot-dev-example version:  <!-- Example: 1.0.0 -->
+* my-plugin version:  <!-- Example: 1.0.0 -->
 
 <!--
     Describe in detail the new functionality you are proposing.

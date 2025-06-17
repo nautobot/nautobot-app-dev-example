@@ -7,12 +7,13 @@ x-nautobot-build: &nautobot-build
     context: "../"
     dockerfile: "development/Dockerfile"
 x-nautobot-base: &nautobot-base
-  image: "nautobot-dev-example/nautobot:${NAUTOBOT_VER}-py${PYTHON_VER}"
+  image: "my-plugin/nautobot:${NAUTOBOT_VER}-py${PYTHON_VER}"
   env_file:
     - "development.env"
     - "creds.env"
   tty: true
 
+version: "3.8"
 services:
   nautobot:
     depends_on:
@@ -29,8 +30,7 @@ services:
       - "-c"  # this is to evaluate the $NAUTOBOT_LOG_LEVEL from the env
       - "nautobot-server celery worker -l $$NAUTOBOT_LOG_LEVEL --events"  ## $$ because of docker-compose
     depends_on:
-      nautobot:
-        condition: "service_healthy"
+      - "nautobot"
     healthcheck:
       interval: "30s"
       timeout: "10s"
@@ -41,11 +41,10 @@ services:
   beat:
     entrypoint:
       - "sh"
-      - "-c"  # this is to evaluate the $NAUTOBOT_BEAT_LOG_LEVEL from the env
-      - "nautobot-server celery beat -l $$NAUTOBOT_BEAT_LOG_LEVEL"  ## $$ because of docker-compose
+      - "-c"  # this is to evaluate the $NAUTOBOT_LOG_LEVEL from the env
+      - "nautobot-server celery beat -l $$NAUTOBOT_LOG_LEVEL"  ## $$ because of docker-compose
     depends_on:
-      nautobot:
-        condition: "service_healthy"
+      - "nautobot"
     healthcheck:
       disable: true
     <<: *nautobot-base
