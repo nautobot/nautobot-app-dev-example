@@ -23,7 +23,7 @@
             "template_dir": "nautobot-app",
             "template_ref": "refs/tags/nautobot-app-v1.2.0",
             "cookie_dir": "",
-            "branch_prefix": "drift-manager-ltm-1.6",
+            "branch_prefix": "drift-manager",
             "pull_request_strategy": "create",
             "post_actions": [],
             "draft": false,
