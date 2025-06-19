@@ -956,6 +956,8 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     build_and_check_docs(context)
     print("Checking app config schema...")
     validate_app_config(context)
+    print("Checking Compatibility Matrix...")
+    check_compatibility_matrix(context)
     if not lint_only:
         print("Running unit tests...")
         unittest(context, failfast=failfast, keepdb=keepdb, coverage=True, skip_docs_build=True)
@@ -985,3 +987,222 @@ def validate_app_config(context):
     """Validate the app config based on the app config schema."""
     start(context, service="nautobot")
     nbshell(context, plain=True, file="development/app_config_schema.py", env={"APP_CONFIG_SCHEMA_COMMAND": "validate"})
+
+
+def parse_poetry_version_constraint(constraint):
+    """Parse a Poetry version constraint and return (min_version, max_version) as strings."""
+
+    def max_version(version, part):
+        # For display, e.g. 2.0.0 -> 2.99.99 for major, 2.4.0 -> 2.4.99 for minor
+        parts = [int(x) for x in version.split(".")]
+        while len(parts) < 3:
+            parts.append(0)
+        if part == "major":
+            return f"{parts[0]}.99.99"
+        elif part == "minor":
+            return f"{parts[0]}.{parts[1]}.99"
+        elif part == "patch":
+            return f"{parts[0]}.{parts[1]}.{parts[2]}"
+        return version
+
+    constraint = constraint.strip()
+    # Multiple constraints, e.g. ">=2.0.3,<3.0.0"
+    if "," in constraint:
+        min_v = None
+        max_v = None
+        for part in constraint.split(","):
+            part = part.strip()
+            m = re.match(r">=\s*([0-9.]+)", part)
+            if m:
+                min_v = m[1]
+            m = re.match(r">\s*([0-9.]+)", part)
+            if m:
+                v = m[1]
+                # bump patch for >
+                v_parts = [int(x) for x in v.split(".")]
+                while len(v_parts) < 3:
+                    v_parts.append(0)
+                v_parts[2] += 1
+                min_v = f"{v_parts[0]}.{v_parts[1]}.{v_parts[2]}"
+            m = re.match(r"<\s*([0-9.]+)", part)
+            if m:
+                v = m[1]
+                # max is one less than this, so e.g. <3.0.0 -> 2.99.99
+                v_parts = [int(x) for x in v.split(".")]
+                if v_parts[1] > 0:
+                    max_v = f"{v_parts[0]}.{v_parts[1]-1}.99"
+                else:
+                    max_v = f"{v_parts[0]-1}.99.99"
+            m = re.match(r"<=\s*([0-9.]+)", part)
+            if m:
+                max_v = m[1]
+        return min_v, max_v
+    # Caret ^
+    if constraint.startswith("^"):
+        v = constraint[1:]
+        parts = v.split(".")
+        if int(parts[0]) > 0:
+            min_v = v
+            max_v = max_version(parts[0], "major")
+        elif int(parts[0]) == 0 and len(parts) > 1 and int(parts[1]) > 0:
+            min_v = v
+            max_v = max_version(f"0.{parts[1]}", "minor")
+        else:
+            min_v = v
+            max_v = max_version(v, "patch")
+        return min_v, max_v
+    # Compatible ~=
+    if constraint.startswith("~="):
+        v = constraint[2:]
+        parts = v.split(".")
+        if len(parts) == 3:
+            min_v = v
+            max_v = max_version(f"{parts[0]}.{parts[1]}", "minor")
+        elif len(parts) == 2:
+            min_v = f"{parts[0]}.{parts[1]}.0"
+            max_v = max_version(f"{parts[0]}.{parts[1]}", "minor")
+        elif len(parts) == 1:
+            min_v = f"{parts[0]}.0.0"
+            max_v = max_version(parts[0], "major")
+        return min_v, max_v
+    # Tilde ~
+    if constraint.startswith("~"):
+        v = constraint[1:]
+        parts = v.split(".")
+        if len(parts) == 3:
+            min_v = v
+            max_v = max_version(f"{parts[0]}.{parts[1]}", "minor")
+        elif len(parts) == 2:
+            min_v = f"{parts[0]}.{parts[1]}.0"
+            max_v = max_version(f"{parts[0]}.{parts[1]}", "minor")
+        elif len(parts) == 1:
+            min_v = f"{parts[0]}.0.0"
+            max_v = max_version(parts[0], "major")
+        return min_v, max_v
+    # Wildcard
+    if "*" in constraint:
+        parts = constraint.replace("*", "0").split(".")
+        if len(parts) == 3:
+            min_v = f"{parts[0]}.{parts[1]}.0"
+            max_v = max_version(f"{parts[0]}.{parts[1]}", "minor")
+        elif len(parts) == 2:
+            min_v = f"{parts[0]}.0.0"
+            max_v = max_version(parts[0], "major")
+        elif len(parts) == 1:
+            min_v = "0.0.0"
+            max_v = max_version("0", "major")
+        return min_v, max_v
+    # Exact version or ==
+    # e.g. 2.0.3 or ==2.0.3
+    m = re.match(r"==?\s*([0-9.]+)", constraint)
+    if m:
+        v = m[1]
+        return v, v
+    else:
+        # If no match, assume it's a version string without any operator
+        v = constraint.strip()
+        if v:
+            return v, v
+    # >= only
+    m = re.match(r">=\s*([0-9.]+)", constraint)
+    if m:
+        v = m[1]
+        return v, None
+    # < only
+    m = re.match(r"<\s*([0-9.]+)", constraint)
+    if m:
+        v = m[1]
+        v_parts = [int(x) for x in v.split(".")]
+        if v_parts[1] > 0:
+            max_v = f"{v_parts[0]}.{v_parts[1]-1}.99"
+        else:
+            max_v = f"{v_parts[0]-1}.99.99"
+        return None, max_v
+    # fallback
+    return constraint, None
+
+
+@task(
+    help={
+        "fix": "Automatically fix issues found in the compatibility matrix. (default: False)",
+    }
+)
+def check_compatibility_matrix(context, fix=False):
+    """Check compatibility matrix for the current Nautobot version."""
+    # Get the markdown table from the docs/admin/compatibility_matrix.md file
+    # Then check the last line of the table to see if the line needs updating.
+    # The format of the table is:
+    # App Version | Minimum Nautobot Version | Maximum Nautobot Version |
+    # | 2.0.X | 2.0.0 | 2.99.99 |
+    # | 2.1.x | 2.1.0 | 2.99.99 |
+    compatibility_matrix_file = Path(__file__).parent / "docs" / "admin" / "compatibility_matrix.md"
+    if not compatibility_matrix_file.exists():
+        raise Exit(f"Compatibility matrix file not found: {compatibility_matrix_file}")
+    with open(compatibility_matrix_file, "r") as file:
+        lines = file.readlines()
+    last_line = next(
+        (line.strip() for line in reversed(lines) if line.startswith("| ")),
+        None,
+    )
+    if not last_line:
+        raise Exit("No compatibility matrix table found in the file.")
+    # Get the current version of the app from poetry
+    app_version = context.run("poetry version --short", hide=True).stdout.strip()
+
+    # Read the Nautobot version from the pyproject.toml file
+    pyproject_file = Path(__file__).parent / "pyproject.toml"
+    if not pyproject_file.exists():
+        raise Exit(f"pyproject.toml file not found: {pyproject_file}")
+    with open(pyproject_file, "r") as file:
+        pyproject_content = file.read()
+    # Extract the Nautobot version from the pyproject.toml file
+    # the version can be specified either as nautobot = "2.4.0" or nautobot = { version = "2.4.0" }
+    nautobot_version_match = re.search(
+        r'nautobot\s*=\s*"(.*?)"|nautobot\s*=\s*\{.*?version\s*=\s*"(.*?)"',
+        pyproject_content,
+    )
+
+    if not nautobot_version_match:
+        raise Exit("Nautobot version not found in the pyproject.toml file.")
+    nautobot_version_constraint = nautobot_version_match.group(1) or nautobot_version_match.group(2)
+    # Convert the Nautobot version constraint into a minimum and maximum version
+    nautobot_constraint_min_version, nautobot_constraint_max_version = parse_poetry_version_constraint(
+        nautobot_version_constraint
+    )
+
+    # Check if the last line of the table contains the current major/minor version of the app
+    current_major_minor_version = ".".join(app_version.split(".")[:2])
+    if f"{current_major_minor_version}.X " not in last_line.upper():
+        if not fix:
+            raise Exit(
+                f"Compatibility matrix for the current app version {app_version} is not up to date. "
+                "Please update the compatibility matrix in docs/admin/compatibility_matrix.md."
+            )
+        # If the fix flag is set, add a new line to the table for the current app version
+        print("Updating compatibility matrix with the current app version...")
+        new_line = f"| {current_major_minor_version}.X | {nautobot_constraint_min_version} | {nautobot_constraint_max_version} |\n"
+        # Add the new line to the end of the table
+        lines.append(new_line)
+
+    # Get the Nautobot version from the last line of the table
+    nautobot_min_version = last_line.split("|")[2].strip()
+    nautobot_max_version = last_line.split("|")[3].strip()
+    if (
+        nautobot_min_version != nautobot_constraint_min_version
+        or nautobot_max_version != nautobot_constraint_max_version
+    ):
+        if not fix:
+            raise Exit(
+                f"Compatibility matrix for the current Nautobot version {nautobot_version_constraint} is not up to date. "
+                "Please update the compatibility matrix in docs/admin/compatibility_matrix.md."
+            )
+        # Update the last line of the table with the current Nautobot version
+        print("Updating compatibility matrix with the current Nautobot version...")
+        lines[-1] = (
+            f"| {current_major_minor_version}.X | {nautobot_constraint_min_version} | {nautobot_constraint_max_version} |\n"
+        )
+
+    if fix:
+        # Write the updated lines back to the compatibility matrix file
+        with open(compatibility_matrix_file, "w") as file:
+            file.writelines(lines)
