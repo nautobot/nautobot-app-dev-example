@@ -23,6 +23,7 @@ class NautobotDevExampleConfig(NautobotAppConfig):
     default_settings = {}
     caching_config = {}
     docs_view_name = "plugins:nautobot_dev_example:docs"
+    searchable_models = ["devexample"]
 
 
 config = NautobotDevExampleConfig  # pylint:disable=invalid-name
