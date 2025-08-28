@@ -829,10 +829,10 @@ def ruff(context, action=None, target=None, fix=False, output_format="concise"):
 
 @task(
     help={
-        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `['format']`)",
+        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `--action format`)",
         "target": "File or directory to inspect, repeatable (default: all files in the project will be inspected)",
         "fix": "Automatically fix the formatting. (default: False)",
-        "quiet": "Do not print diff when formatting or checking (default: False)",
+        "quiet": "Suppress output when formatting or checking (default: False)",
     },
     iterable=["target", "action"],
 )
