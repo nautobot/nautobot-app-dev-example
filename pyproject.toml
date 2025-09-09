@@ -44,7 +44,11 @@ ruff = "0.5.5"
 yamllint = "*"
 toml = "*"
 # Python implementation of markdownlint
+<<<<<<< HEAD
 pymarkdownlnt = "~0.9.30"
+=======
+pymarkdownlnt = "~0.9.29"
+>>>>>>> 0e3a2ee (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 Markdown = "*"
 # Render custom markdown for version added/changed/remove notes
 markdown-version-annotations = "1.0.1"
@@ -90,7 +94,7 @@ notes = """,
 
 [tool.pylint-nautobot]
 supported_nautobot_versions = [
-    "2.0.0"
+    "2.4.11"
 ]
 
 [tool.ruff]
