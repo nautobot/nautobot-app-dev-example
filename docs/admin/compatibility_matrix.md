@@ -4,6 +4,7 @@
 | ------------- | -------------------- | ------------- |
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 1.0.X         | 2.0.0                | 2.99.99        |
 | 2.0.X         | 2.0.0                | 2.99.99        |
 | 2.1.X         | 2.0.0                | 2.99.99        |
@@ -14,3 +15,6 @@
 =======
 | 1.0.X         | 2.4.11                | 2.99.99        |
 >>>>>>> e111009 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
+=======
+| 1.0.X         | 2.4.11                | 2.99.99        |
+>>>>>>> 9b13df2 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)

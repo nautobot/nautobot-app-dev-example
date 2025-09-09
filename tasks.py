@@ -53,10 +53,14 @@ namespace.configure(
     {
         "nautobot_dev_example": {
 <<<<<<< HEAD
+<<<<<<< HEAD
             "nautobot_ver": "2.4.11",
 =======
             "nautobot_ver": "2.4.2",
 >>>>>>> c3d88a9 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
+=======
+            "nautobot_ver": "2.4.2",
+>>>>>>> 9b13df2 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
             "project_name": "nautobot-dev-example",
             "python_ver": "3.11",
             "local": False,
