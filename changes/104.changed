@@ -1,0 +1,1 @@
+Changed max length of CharFields to use nautobot.apps.constants.CHARFIELD_MAX_LENGTH.

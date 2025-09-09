@@ -1,0 +1,2 @@
+Removed docs/requirements.txt and updated readthedocs config to install dependencies from Poetry.
+Added pymdownx.details markdown extension to mkdocs config.
