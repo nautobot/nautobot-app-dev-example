@@ -10,7 +10,11 @@ from nautobot_dev_example import views
 app_name = "nautobot_dev_example"
 router = NautobotUIViewSetRouter()
 
+<<<<<<< HEAD
 router.register("dev-examples", views.DevExampleUIViewSet)
+=======
+router.register("devexample", views.DevExampleUIViewSet)
+>>>>>>> 36193f9 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 
 
 urlpatterns = [

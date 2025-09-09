@@ -16,11 +16,12 @@ class DevExampleViewTest(ViewTestCases.PrimaryObjectViewTestCase):
         "name": "Test 1",
         "description": "Initial model",
     }
-
-    update_data = {
-        "name": "Test 2",
-        "description": "Updated model",
-    }
+    csv_data = (
+        "name",
+        "Test csv1",
+        "Test csv2",
+        "Test csv3",
+    )
 
     @classmethod
     def setUpTestData(cls):

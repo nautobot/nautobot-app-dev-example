@@ -56,7 +56,6 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
-lcov.info
 
 # Translations
 *.mo

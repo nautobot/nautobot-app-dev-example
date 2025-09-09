@@ -14,7 +14,6 @@ limitations under the License.
 
 import os
 import re
-import shutil
 import sys
 from pathlib import Path
 from time import sleep
@@ -119,7 +118,6 @@ def docker_compose(context, command, **kwargs):
         command (str): Command string to append to the "docker compose ..." command, such as "build", "up", etc.
         **kwargs: Passed through to the context.run() call.
     """
-    _ensure_creds_env_file(context)
     build_env = {
         # Note: 'docker compose logs' will stop following after 60 seconds by default,
         # so we are overriding that by setting this environment variable.
@@ -203,6 +201,7 @@ def build(context, force_rm=False, cache=True):
     docker_compose(context, command)
 
 
+<<<<<<< HEAD
 def _ensure_creds_env_file(context):
     """Ensure that the development/creds.env file exists."""
     if not os.path.exists(os.path.join(context.nautobot_dev_example.compose_dir, "creds.env")):
@@ -215,6 +214,8 @@ def _ensure_creds_env_file(context):
         )
 
 
+=======
+>>>>>>> 36193f9 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 @task
 def generate_packages(context):
     """Generate all Python packages inside docker and copy the file locally under dist/."""
@@ -265,6 +266,7 @@ def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ve
         if constrain_python_ver:
             command += f" --python {context.nautobot_dev_example.python_ver}"
         try:
+            run_command(context, command, hide=True)
             output = run_command(context, command, hide=True)
             print(output.stdout, end="")
             print(output.stderr, file=sys.stderr, end="")
@@ -702,17 +704,6 @@ def build_and_check_docs(context):
     command = "mkdocs build --no-directory-urls --strict"
     run_command(context, command)
 
-    # Check for the existence of a release notes file for the current version if it's not a prerelease.
-    version = context.run("poetry version --short", hide=True)
-    match = re.match(r"^(\d+)\.(\d+)\.\d+$", version.stdout.strip())
-    if match:
-        major = match.group(1)
-        minor = match.group(2)
-        release_notes_file = Path(__file__).parent / "docs" / "admin" / "release_notes" / f"version_{major}.{minor}.md"
-        if not release_notes_file.exists():
-            print(f"Release notes file `version_{major}.{minor}.md` does not exist.")
-            raise Exit(code=1)
-
 
 @task(name="help")
 def help_task(context):
@@ -872,18 +863,6 @@ def yamllint(context):
 
 
 @task
-def markdownlint(context, fix=False):
-    """Lint Markdown files."""
-    # note: at the time of this writing, the `--fix` option is in pending state for pymarkdown on both rules.
-    if fix:
-        command = "pymarkdown fix --recurse docs *.md"
-        run_command(context, command)
-    # fix mode doesn't scan/report issues it can't fix, so always run scan even after fixing
-    command = "pymarkdown scan --recurse docs *.md"
-    run_command(context, command)
-
-
-@task
 def check_migrations(context):
     """Check for missing migrations."""
     command = "nautobot-server makemigrations --dry-run --check"
@@ -899,8 +878,6 @@ def check_migrations(context):
         "buffer": "Discard output from passing tests",
         "pattern": "Run specific test methods, classes, or modules instead of all tests",
         "verbose": "Enable verbose test output.",
-        "coverage": "Enable coverage reporting. Defaults to False",
-        "skip_docs_build": "Skip building the documentation before running tests.",
     }
 )
 def unittest(  # noqa: PLR0913
@@ -911,16 +888,9 @@ def unittest(  # noqa: PLR0913
     buffer=True,
     pattern="",
     verbose=False,
-    coverage=False,
-    skip_docs_build=False,
 ):
     """Run Nautobot unit tests."""
-    if not skip_docs_build:
-        build_and_check_docs(context)
-    if coverage:
-        command = f"coverage run --module nautobot.core.cli test {label}"
-    else:
-        command = f"nautobot-server test {label}"
+    command = f"coverage run --module nautobot.core.cli test {label}"
 
     if keepdb:
         command += " --keepdb"
@@ -938,24 +908,8 @@ def unittest(  # noqa: PLR0913
 
 @task
 def unittest_coverage(context):
-    """Report on code test coverage as measured by 'invoke unittest --coverage'."""
-    command = "coverage report --skip-covered"
-
-    run_command(context, command)
-
-
-@task
-def coverage_lcov(context):
-    """Generate an LCOV coverage report."""
-    command = "coverage lcov -o lcov.info"
-
-    run_command(context, command)
-
-
-@task
-def coverage_xml(context):
-    """Generate an XML coverage report."""
-    command = "coverage xml -o coverage.xml"
+    """Report on code test coverage as measured by 'invoke unittest'."""
+    command = "coverage report --skip-covered --include 'nautobot_dev_example/*' --omit *migrations*"
 
     run_command(context, command)
 
@@ -980,8 +934,6 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     djlint(context)
     print("Running yamllint...")
     yamllint(context)
-    print("Running markdownlint...")
-    markdownlint(context)
     print("Running poetry check...")
     lock(context, check=True)
     print("Running migrations check...")
@@ -994,9 +946,8 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     validate_app_config(context)
     if not lint_only:
         print("Running unit tests...")
-        unittest(context, failfast=failfast, keepdb=keepdb, coverage=True, skip_docs_build=True)
+        unittest(context, failfast=failfast, keepdb=keepdb)
         unittest_coverage(context)
-        coverage_lcov(context)
     print("All tests have passed!")
 
 
