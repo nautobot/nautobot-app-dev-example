@@ -92,15 +92,6 @@ def _await_healthy_container(context, container_id):
         sleep(1)
 
 
-def _parse_python_cli_value(val):
-    """Accepts 'X.Y' or 'X.Y.Z' and returns 'X.Y' (major.minor)."""
-    m = re.match(r"^(\d+)\.(\d+)(?:\.(\d+))?$", val.strip())
-    if not m:
-        raise Exit(f"Invalid value for --constrain-python-ver: '{val}'. Use X.Y or X.Y.Z")
-    mm = f"{m.group(1)}.{m.group(2)}"
-    return mm
-
-
 def task(function=None, *args, **kwargs):
     """Task decorator to override the default Invoke task decorator and add each task to the invoke namespace."""
 
@@ -261,7 +252,7 @@ def _get_docker_nautobot_version(context, nautobot_ver=None, python_ver=None):
         ),
         "constrain_python_ver": (
             "Target Python version to constrain resolution. Accepts X.Y or X.Y.Z. "
-            "Example: --constrain-python-ver=3.9.3"
+            "Example: --constrain-python-ver=3.9.3 "
             "This helps avoid poetry complaints about Python incompatibilities. "
             "Generally intended to be used in CI and not for local development. (default: disabled)"
         ),
@@ -269,17 +260,12 @@ def _get_docker_nautobot_version(context, nautobot_ver=None, python_ver=None):
 )
 def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ver=""):
     """Generate poetry.lock; optionally constrain Nautobot and/or Python (with patch)."""
-    target_mm = None
-
-    if constrain_python_ver:
-        target_mm = _parse_python_cli_value(constrain_python_ver)
-
     if constrain_nautobot_ver:
         docker_nautobot_version = _get_docker_nautobot_version(context)
         command = f"poetry add --lock nautobot@{docker_nautobot_version}"
 
-        if target_mm:
-            command += f" --python {target_mm}"
+        if constrain_python_ver:
+            command += f" --python {constrain_python_ver}"
         try:
             output = run_command(context, command, hide=True)
             print(output.stdout, end="")
@@ -287,8 +273,8 @@ def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ve
         except UnexpectedExit:
             print("Unable to add Nautobot dependency with version constraint, falling back to git branch.")
             command = f"poetry add --lock git+https://github.com/nautobot/nautobot.git#{context.nautobot_dev_example.nautobot_ver}"
-            if target_mm:
-                command += f" --python {target_mm}"
+            if constrain_python_ver:
+                command += f" --python {constrain_python_ver}"
             run_command(context, command)
     else:
         command = f"poetry {'check' if check else 'lock'}"
