@@ -94,55 +94,13 @@ def _await_healthy_container(context, container_id):
 
 def _parse_python_cli_value(val):
     """
-    Accepts 'X.Y' or 'X.Y.Z'.
-
-    Returns a tuple of:
-      - major_minor: 'X.Y'
-      - min_spec   : 'X.Y' or 'X.Y.Z' (to use as the lower bound in pyproject).
+    Accepts 'X.Y' or 'X.Y.Z' and returns 'X.Y' (major.minor).
     """
     m = re.match(r"^(\d+)\.(\d+)(?:\.(\d+))?$", val.strip())
     if not m:
         raise Exit(f"Invalid value for --constrain-python-ver: '{val}'. Use X.Y or X.Y.Z")
     mm = f"{m.group(1)}.{m.group(2)}"
-    patch = m.group(3)
-    return mm, (f"{mm}.{patch}" if patch is not None else mm)
-
-
-def _update_poetry_python_constraint(min_python):
-    """
-    Update the minimum Python requirement in pyproject.toml to >=min_python, preserving any existing upper bound (<X.Y...).
-
-    Supports:
-      - Poetry classic: [tool.poetry.dependencies].python
-    """
-    p = Path("pyproject.toml")
-    text = p.read_text(encoding="utf-8")
-
-    def _compute_new_spec(old_spec: str) -> str:
-        # Try to preserve an existing upper bound, e.g. "<3.13"
-        m_upper = re.search(r"<\s*([0-9][0-9\.]*)", old_spec)
-        if m_upper:
-            upper = m_upper.group(1)
-        else:
-            # Conservative fallback: next major
-            major = int(min_python.split(".")[0])
-            upper = f"{major + 1}.0"
-        return f">={min_python},<{upper}"
-
-    m_section = re.search(r"(?ms)^\[tool\.poetry\.dependencies\]\s*(.*?)(^\[|$\Z)", text)
-    if m_section:
-        section = m_section.group(1)
-        m_py = re.search(r'(?m)^\s*python\s*=\s*"([^"]+)"', section)
-        if m_py:
-            old = m_py.group(1)
-            new = _compute_new_spec(old)
-            start = m_section.start(1) + m_py.start(1)
-            end = m_section.start(1) + m_py.end(1)
-            text = text[:start] + new + text[end:]
-            p.write_text(text, encoding="utf-8")
-            return
-
-    raise Exit("Could not locate Python requirement in pyproject.toml.")
+    return mm
 
 
 def task(function=None, *args, **kwargs):
@@ -304,7 +262,7 @@ def _get_docker_nautobot_version(context, nautobot_ver=None, python_ver=None):
             "Generally intended to be used in CI and not for local development. (default: disabled)"
         ),
         "constrain_python_ver": (
-            "Target Python version to constrain resolution and pyproject. Accepts X.Y or X.Y.Z. "
+            "Target Python version to constrain resolution. Accepts X.Y or X.Y.Z. "
             "Example: --constrain-python-ver=3.9.3"
             "This helps avoid poetry complaints about Python incompatibilities. "
             "Generally intended to be used in CI and not for local development. (default: disabled)"
@@ -316,8 +274,7 @@ def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ve
     target_mm = None
 
     if constrain_python_ver:
-        target_mm, target_min_spec = _parse_python_cli_value(constrain_python_ver)
-        _update_poetry_python_constraint(target_min_spec)
+        target_mm = _parse_python_cli_value(constrain_python_ver)
 
     if constrain_nautobot_ver:
         docker_nautobot_version = _get_docker_nautobot_version(context)
