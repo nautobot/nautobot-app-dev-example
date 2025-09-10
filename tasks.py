@@ -93,9 +93,7 @@ def _await_healthy_container(context, container_id):
 
 
 def _parse_python_cli_value(val):
-    """
-    Accepts 'X.Y' or 'X.Y.Z' and returns 'X.Y' (major.minor).
-    """
+    """Accepts 'X.Y' or 'X.Y.Z' and returns 'X.Y' (major.minor)."""
     m = re.match(r"^(\d+)\.(\d+)(?:\.(\d+))?$", val.strip())
     if not m:
         raise Exit(f"Invalid value for --constrain-python-ver: '{val}'. Use X.Y or X.Y.Z")
