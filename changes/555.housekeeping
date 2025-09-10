@@ -1,0 +1,4 @@
+Add support for `--constrain-python-ver` (accepting X.Y or X.Y.Z) in `invoke lock`.
+Updates `pyproject.toml` with the minimum Python patch version when required (e.g. 3.9.3),
+and adjusts CI to pass the correct constraint per matrix. This prevents dependency resolution
+drift on newer runners and keeps the lockfile consistent with the runtime environment.
