@@ -131,18 +131,10 @@ jobs:
         uses: "networktocode/gh-action-setup-poetry-environment@v6"
         with:
           poetry-version: "2.1.3"
-          python-version: "${{ matrix.python-version }}"
-
-      - name: "Set python constraint"
-        run: |
-            if [ "${{ matrix.python-version }}" = "3.9" ]; then
-              echo "PY_CONSTRAINT=3.9.3" >> $GITHUB_ENV
-            else
-              echo "PY_CONSTRAINT=${{ matrix.python-version }}" >> $GITHUB_ENV
-            fi
       - name: "Constrain Nautobot version and regenerate lock file"
         env:
           INVOKE_NAUTOBOT_DEV_EXAMPLE_LOCAL: "true"
+          PY_CONSTRAINT: "${{ matrix.python-version == '3.9' && '3.9.2' || matrix.python-version }}"
         run: "poetry run invoke lock --constrain-nautobot-ver --constrain-python-ver=${{ env.PY_CONSTRAINT }}"
       - name: "Set up Docker Buildx"
         id: "buildx"
@@ -195,17 +187,10 @@ jobs:
         uses: "networktocode/gh-action-setup-poetry-environment@v6"
         with:
           poetry-version: "2.1.3"
-          python-version: "${{ matrix.python-version }}"
-      - name: "Set python constraint"
-        run: |
-            if [ "${{ matrix.python-version }}" = "3.9" ]; then
-              echo "PY_CONSTRAINT=3.9.3" >> $GITHUB_ENV
-            else
-              echo "PY_CONSTRAINT=${{ matrix.python-version }}" >> $GITHUB_ENV
-            fi
       - name: "Constrain Nautobot version and regenerate lock file"
         env:
           INVOKE_NAUTOBOT_DEV_EXAMPLE_LOCAL: "true"
+          PY_CONSTRAINT: "${{ matrix.python-version == '3.9' && '3.9.2' || matrix.python-version }}"
         run: "poetry run invoke lock --constrain-nautobot-ver --constrain-python-ver=${{ env.PY_CONSTRAINT }}"
       - name: "Set up Docker Buildx"
         id: "buildx"
@@ -254,17 +239,10 @@ jobs:
         uses: "networktocode/gh-action-setup-poetry-environment@v6"
         with:
           poetry-version: "2.1.3"
-          python-version: "${{ matrix.python-version }}"
-      - name: "Set python constraint"
-        run: |
-            if [ "${{ matrix.python-version }}" = "3.9" ]; then
-              echo "PY_CONSTRAINT=3.9.3" >> $GITHUB_ENV
-            else
-              echo "PY_CONSTRAINT=${{ matrix.python-version }}" >> $GITHUB_ENV
-            fi
       - name: "Constrain Nautobot version and regenerate lock file"
         env:
           INVOKE_NAUTOBOT_DEV_EXAMPLE_LOCAL: "true"
+          PY_CONSTRAINT: "${{ matrix.python-version == '3.9' && '3.9.2' || matrix.python-version }}"
         run: "poetry run invoke lock --constrain-nautobot-ver --constrain-python-ver=${{ env.PY_CONSTRAINT }}"
       - name: "Set up Docker Buildx"
         id: "buildx"
