@@ -106,12 +106,7 @@ First, create a release branch off of `develop` (`git switch -c release-1.4.2 de
 
 > You will need to have the project's poetry environment built at this stage, as the towncrier command runs **locally only**. If you don't have it, run `poetry install` first.
 
-Generate release notes with `invoke generate-release-notes --version 1.4.2` and answer `yes` to the prompt `Is it okay if I remove those files? [Y/n]:`. This will update the release notes in `docs/admin/release_notes/version_X.Y.md`, stage that file in git, and `git rm` all the fragments that have now been incorporated into the release notes.
-
-There are two possibilities:
-
-1. If you're releasing a new major or minor version, rename the `version_X.Y.md` file accordingly (e.g. rename to `docs/admin/release_notes/version_1.4.md`). Update the `Release Overview` and add this new page to the table of contents within `mkdocs.yml`.
-2. If you're releasing a patch version, copy your version's section from the `version_X.Y.md` file into the already existing `docs/admin/release_notes/version_1.4.md` file. Delete the `version_X.Y.md` file.
+Generate release notes with `invoke generate-release-notes --version 1.4.2`. This will update the release notes in `docs/admin/release_notes/version_1.4.md`, stage that file in git, and `git rm` all the fragments that have now been incorporated into the release notes. If you're releasing a new major or minor version, update the `Release Overview` in `docs/admin/release_notes/version_{major}.{minor}.md` and double check the `mkdocs.yml` release notes navigation.
 
 Stage all the changes (`git add`) and check the diffs to verify all of the changes are correct (`git diff --cached`).
 
