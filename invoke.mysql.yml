@@ -1,7 +1,11 @@
 ---
 nautobot_dev_example:
   project_name: "nautobot-dev-example"
+<<<<<<< HEAD
   nautobot_ver: "2.4.11"
+=======
+  nautobot_ver: "2.4.2"
+>>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
   local: false
   python_ver: "3.11"
   compose_dir: "development"
