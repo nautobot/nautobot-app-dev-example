@@ -52,15 +52,7 @@ namespace = Collection("nautobot_dev_example")
 namespace.configure(
     {
         "nautobot_dev_example": {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            "nautobot_ver": "2.4.11",
-=======
             "nautobot_ver": "2.4.2",
->>>>>>> 0e3a2ee (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
-=======
-            "nautobot_ver": "2.4.2",
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
             "project_name": "nautobot-dev-example",
             "python_ver": "3.11",
             "local": False,
@@ -794,11 +786,7 @@ def pylint(context):
 def autoformat(context):
     """Run code autoformatting."""
     ruff(context, action=["format"], fix=True)
-<<<<<<< HEAD
-    djlint(context, action=["format"], fix=True)
-=======
     djhtml(context)
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 
 
 @task(
@@ -842,32 +830,6 @@ def ruff(context, action=None, target=None, fix=False, output_format="concise"):
 
 @task(
     help={
-<<<<<<< HEAD
-        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `--action format`)",
-        "target": "File or directory to inspect, repeatable (default: all files in the project will be inspected)",
-        "fix": "Automatically fix the formatting. (default: False)",
-        "quiet": "Suppress output when formatting or checking (default: False)",
-    },
-    iterable=["target", "action"],
-)
-def djlint(context, action=None, target=None, fix=False, quiet=False):
-    """Run djlint to validate Django template formatting."""
-    if not action:
-        action = ["format"]  # TODO: Add 'lint' when we are ready to enforce linting
-    if not target:
-        target = ["."]
-
-    command = "djlint "
-
-    if "format" in action:
-        command += "--reformat --warn " if fix else "--check "
-        if quiet:
-            command += "--quiet "
-
-    if "lint" in action:
-        command += "--lint "
-
-=======
         "target": "File or directory to inspect, repeatable (default: all files in the project will be inspected)",
     },
     iterable=["target"],
@@ -878,7 +840,6 @@ def djlint(context, target=None):
         target = ["."]
 
     command = "djlint --lint "
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
     command += " ".join(target)
 
     exit_code = 0 if run_command(context, command, warn=True) else 1
@@ -886,8 +847,6 @@ def djlint(context, target=None):
         raise Exit(code=exit_code)
 
 
-<<<<<<< HEAD
-=======
 @task(
     help={
         "check": "Run djhtml in check mode.",
@@ -905,7 +864,6 @@ def djhtml(context, check=False):
         raise Exit(code=exit_code)
 
 
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 @task
 def yamllint(context):
     """Run yamllint to validate formatting adheres to NTC defined YAML standards.

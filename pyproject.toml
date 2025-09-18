@@ -29,11 +29,7 @@ include = [
 [tool.poetry.dependencies]
 python = ">=3.9.2,<3.13"
 # Used for local development
-<<<<<<< HEAD
-nautobot = "^2.4.11"
-=======
 nautobot = ">=2.4.2,<3.0.0"
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 
 [tool.poetry.group.dev.dependencies]
 coverage = "*"
@@ -48,15 +44,7 @@ ruff = "0.5.5"
 yamllint = "*"
 toml = "*"
 # Python implementation of markdownlint
-<<<<<<< HEAD
-<<<<<<< HEAD
 pymarkdownlnt = "~0.9.30"
-=======
-pymarkdownlnt = "~0.9.29"
->>>>>>> 0e3a2ee (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
-=======
-pymarkdownlnt = "~0.9.30"
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 Markdown = "*"
 towncrier = ">=23.6.0,<=24.8.0"
 to-json-schema = "*"
@@ -76,13 +64,6 @@ mkdocstrings = "0.25.2"
 mkdocstrings-python = "1.10.8"
 mkdocs-autorefs = "1.2.0"
 griffe = "1.1.1"
-<<<<<<< HEAD
-towncrier = ">=23.6.0,<=24.8.0"
-to-json-schema = "*"
-jsonschema = "*"
-djlint = ">=1.36.4,<2.0.0"
-=======
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 
 [tool.poetry.extras]
 all = [
@@ -100,14 +81,11 @@ no-docstring-rgx = "^(_|test_|Meta$)"
 [tool.pylint.messages_control]
 disable = """,
     line-too-long,
-<<<<<<< HEAD
     too-many-ancestors,
-=======
     too-many-positional-arguments,
     nb-warn-dunder-filter-field,
     nb-no-search-function,
     nb-no-char-filter-q,
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 """
 
 [tool.pylint.miscellaneous]
@@ -119,11 +97,7 @@ notes = """,
 
 [tool.pylint-nautobot]
 supported_nautobot_versions = [
-<<<<<<< HEAD
-    "2.4.11"
-=======
     "2"
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 ]
 
 [tool.ruff]
@@ -244,12 +218,5 @@ showcontent = true
 
 [tool.djlint]
 ignore = "H005,H006,H008,H011,H012,H013,H014,H015,H016,H019,H020,H021,H022,H023,H025,H026,H030,H031,H037"
-<<<<<<< HEAD
-max_line_length = 1000
-preserve_blank_lines = true
-max_attribute_length = 1000
-line_break_after_multiline_tag = false
-=======
->>>>>>> 0d4171c (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 profile="django"
 extend_exclude = "docs/,nautobot_dev_example/static/"
