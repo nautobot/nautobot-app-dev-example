@@ -263,6 +263,7 @@ def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ve
     if constrain_nautobot_ver:
         docker_nautobot_version = _get_docker_nautobot_version(context)
         command = f"poetry add --lock nautobot@{docker_nautobot_version}"
+
         if constrain_python_ver:
             command += f" --python {constrain_python_ver}"
         try:

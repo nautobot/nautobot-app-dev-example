@@ -43,7 +43,7 @@ jobs:
       - name: "Linting: ruff"
         run: "poetry run invoke ruff --action lint"
   djlint-format:
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-latest"
     env:
       INVOKE_NAUTOBOT_DEV_EXAMPLE_LOCAL: "True"
     steps:

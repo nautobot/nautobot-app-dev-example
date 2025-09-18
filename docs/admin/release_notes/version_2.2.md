@@ -4,6 +4,23 @@ This document describes all new features and changes in the release. The format 
 
 ## Release Overview
 
+## [v2.2.1 (2025-09-09)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v2.2.1)
+
+### Changed
+
+- [#104](https://github.com/nautobot/nautobot-app-dev-example/issues/104) - Changed max length of CharFields to `nautobot.apps.constants.CHARFIELD_MAX_LENGTH`.
+
+### Documentation
+
+- [#104](https://github.com/nautobot/nautobot-app-dev-example/issues/104) - Removed `docs/requirements.txt` and updated readthedocs config to install dependencies from Poetry.
+- [#104](https://github.com/nautobot/nautobot-app-dev-example/issues/104) - Added `pymdownx.details` markdown extension to mkdocs config.
+
+### Housekeeping
+
+- [#101](https://github.com/nautobot/nautobot-app-dev-example/issues/101) - Implement DJLint for Django Template Linting.
+- [#104](https://github.com/nautobot/nautobot-app-dev-example/issues/104) - Updated CI to use ubuntu-latest image.
+- [#104](https://github.com/nautobot/nautobot-app-dev-example/issues/104) - Changed CI SLACK_WEBHOOK_URL secret to OSS_PYPI_SLACK_WEBHOOK_URL.
+
 ## [v2.2.0 (2025-08-26)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v2.2.0)
 
 ### Changed
