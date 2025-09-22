@@ -52,7 +52,7 @@ namespace = Collection("nautobot_dev_example")
 namespace.configure(
     {
         "nautobot_dev_example": {
-            "nautobot_ver": "2.4.2",
+            "nautobot_ver": "2.4.11",
             "project_name": "nautobot-dev-example",
             "python_ver": "3.11",
             "local": False,
