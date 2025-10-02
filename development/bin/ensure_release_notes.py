@@ -12,7 +12,6 @@ Example:
 """
 
 import argparse
-import sys
 
 try:
     import tomllib
@@ -29,29 +28,30 @@ def release_notes_pyproject_toml(version):
     pyproject_data = tomllib.loads(pyproject_content)
 
     # Update the towncrier filename
-    pyproject_data["tool"]["towncrier"]["filename"] = f"docs/admin/release_notes/version_{version}.md"
+    if pyproject_data["tool"]["towncrier"].get("filename", "") != f"docs/admin/release_notes/version_{version}.md":
+        pyproject_data["tool"]["towncrier"]["filename"] = f"docs/admin/release_notes/version_{version}.md"
 
-    # Write back the updated content to pyproject.toml
-    new_pyproject_content = []
-    in_towncrier_section = False
-    for line in pyproject_content.splitlines():
-        if line.strip() == "[tool.towncrier]":
-            in_towncrier_section = True
-            new_pyproject_content.append(line)
-            continue
-        if in_towncrier_section:
-            if line.strip().startswith("filename"):
-                new_pyproject_content.append(f'filename = "docs/admin/release_notes/version_{version}.md"')
-                in_towncrier_section = False  # Only replace the first occurrence
+        # Write back the updated content to pyproject.toml
+        new_pyproject_content = []
+        in_towncrier_section = False
+        for line in pyproject_content.splitlines():
+            if line.strip() == "[tool.towncrier]":
+                in_towncrier_section = True
+                new_pyproject_content.append(line)
+                continue
+            if in_towncrier_section:
+                if line.strip().startswith("filename"):
+                    new_pyproject_content.append(f'filename = "docs/admin/release_notes/version_{version}.md"')
+                    in_towncrier_section = False  # Only replace the first occurrence
+                else:
+                    new_pyproject_content.append(line)
             else:
                 new_pyproject_content.append(line)
-        else:
-            new_pyproject_content.append(line)
 
-    pyproject_file.write_text("\n".join(new_pyproject_content))
-    # Add a newline at the end of the file if it doesn't exist
-    if not pyproject_file.read_text().endswith("\n"):
-        pyproject_file.write_text(pyproject_file.read_text() + "\n")
+        pyproject_file.write_text("\n".join(new_pyproject_content))
+        # Add a newline at the end of the file if it doesn't exist
+        if not pyproject_file.read_text().endswith("\n"):
+            pyproject_file.write_text(pyproject_file.read_text() + "\n")
 
 
 def ensure_release_notes_file(version):
