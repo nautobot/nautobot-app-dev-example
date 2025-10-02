@@ -56,20 +56,13 @@ def release_notes_pyproject_toml(version):
 
 def ensure_release_notes_file(version):
     """Ensure that the release notes file for the given version exists and is referenced in mkdocs.yml."""
-    release_notes_file = Path(__file__).parent.parent.parent / "docs" / "admin" / "release_notes" / f"version_{version}.md"
+    release_notes_file = (
+        Path(__file__).parent.parent.parent / "docs" / "admin" / "release_notes" / f"version_{version}.md"
+    )
     if not release_notes_file.exists():
-        # Create a new release notes file with a basic template
-        content = f"""# v{version} Release Notes
-
-This document describes all new features and changes in the release. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## Release Overview
-
-- Major features or milestones
-- Changes to compatibility with Nautobot and/or other apps, libraries etc.
-
-<!-- towncrier release notes start -->
-    """
+        # Create a new release notes file with a basic template from template_header.txt
+        template_header = Path(__file__).parent / "template_header.txt"
+        content = template_header.read_text().format(version=version)
         release_notes_file.write_text(content)
 
 
