@@ -732,7 +732,7 @@ def help_task(context):
     help={
         "version": "Version of Nautobot Dev Example App to generate the release notes for.",
         "date": "Date of the release (default: today).",
-        "keep": "Keep existing release notes files (default: False).",
+        "keep": "Keep existing release notes files. Useful for testing. (default: False).",
     }
 )
 def generate_release_notes(context, version="", date="", keep=False):

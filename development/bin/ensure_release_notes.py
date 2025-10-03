@@ -32,6 +32,7 @@ def release_notes_pyproject_toml(version):
         pyproject_data["tool"]["towncrier"]["filename"] = f"docs/admin/release_notes/version_{version}.md"
 
         # Write back the updated content to pyproject.toml
+        # tomllib is not used to write the file because it is not roundtrippable
         new_pyproject_content = []
         in_towncrier_section = False
         for line in pyproject_content.splitlines():

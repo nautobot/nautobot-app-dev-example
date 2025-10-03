@@ -106,7 +106,7 @@ First, create a release branch off of `develop` (`git switch -c release-1.4.2 de
 
 > You will need to have the project's poetry environment built at this stage, as the towncrier command runs **locally only**. If you don't have it, run `poetry install` first.
 
-Generate release notes with `invoke generate-release-notes --version 1.4.2`. This will update the release notes in `docs/admin/release_notes/version_1.4.md`, stage that file in git, and `git rm` all the fragments that have now been incorporated into the release notes. If you're releasing a new major or minor version, update the `Release Overview` in `docs/admin/release_notes/version_{major}.{minor}.md` and `git add mkdocs.yml` to stage any changes made to the release notes navigation.
+Generate release notes with `invoke generate-release-notes --version 1.4.2`. This will update the release notes in `docs/admin/release_notes/version_1.4.md`, stage that file in git, and `git rm` all the fragments that have now been incorporated into the release notes. If you're releasing a new major or minor version, this will create a new `docs/admin/release_notes/version_{major}.{minor}.md` file. You'll need to update the `Release Overview` section in that file manually and `git add mkdocs.yml pyproject.toml` to stage the changes made to the mkdocs navigation and the towncrier filename configuration.
 
 Stage all the changes (`git add`) and check the diffs to verify all of the changes are correct (`git diff --cached`).
 
