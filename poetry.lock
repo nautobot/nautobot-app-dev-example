@@ -1163,6 +1163,21 @@ files = [
 django = ">=4.2"
 
 [[package]]
+name = "djhtml"
+version = "3.0.9"
+description = "Django/Jinja template indenter"
+optional = false
+python-versions = "*"
+groups = ["dev"]
+files = [
+    {file = "djhtml-3.0.9-py3-none-any.whl", hash = "sha256:1bcde56d0d469546f391a269d84c71df4054c7df73ad5c51572b38a611156dc4"},
+    {file = "djhtml-3.0.9.tar.gz", hash = "sha256:b21d7e6836b5aa8fb415233eb853ad14fdc26694f19ed17158ba71c97fa23f39"},
+]
+
+[package.extras]
+dev = ["nox", "pre-commit"]
+
+[[package]]
 name = "djlint"
 version = "1.36.4"
 description = "HTML Template Linter and Formatter"
@@ -4157,4 +4172,4 @@ all = []
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9.2,<3.13"
-content-hash = "72c4227525c501d18d5e661c32cb3c8c2844cf58eb2d6d408de218f6b49cf0fd"
+content-hash = "ac41ff289baadbff51775534cac179863cdf36fa3091d5c453f135f2a8e292bb"
