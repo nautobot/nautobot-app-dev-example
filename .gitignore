@@ -298,8 +298,8 @@ fabric.properties
 
 # Random
 creds.env
-!development/towncrier_header.txt
 development/*.txt
+!development/towncrier_header.txt
 
 # Invoke overrides
 invoke.yml

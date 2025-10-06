@@ -26,10 +26,11 @@ def release_notes_pyproject_toml(version):
     pyproject_file = Path(__file__).parent.parent.parent / "pyproject.toml"
     pyproject_content = pyproject_file.read_text()
     pyproject_data = tomllib.loads(pyproject_content)
+    release_notes_file = f"docs/admin/release_notes/version_{version}.md"
 
     # Update the towncrier filename
-    if pyproject_data["tool"]["towncrier"].get("filename", "") != f"docs/admin/release_notes/version_{version}.md":
-        pyproject_data["tool"]["towncrier"]["filename"] = f"docs/admin/release_notes/version_{version}.md"
+    if pyproject_data["tool"]["towncrier"].get("filename", "") != release_notes_file:
+        pyproject_data["tool"]["towncrier"]["filename"] = release_notes_file
 
         # Write back the updated content to pyproject.toml
         # tomllib is not used to write the file because it is not roundtrippable
@@ -53,6 +54,8 @@ def release_notes_pyproject_toml(version):
         # Add a newline at the end of the file if it doesn't exist
         if not pyproject_file.read_text().endswith("\n"):
             pyproject_file.write_text(pyproject_file.read_text() + "\n")
+        # Remind the user to update the release notes file.
+        print(f"\033[33mRemember to update the Release Overview section in the release notes file: {release_notes_file}\033[0m")
 
 
 def ensure_release_notes_file(version):
@@ -61,9 +64,9 @@ def ensure_release_notes_file(version):
         Path(__file__).parent.parent.parent / "docs" / "admin" / "release_notes" / f"version_{version}.md"
     )
     if not release_notes_file.exists():
-        # Create a new release notes file with a basic template from template_header.txt
-        template_header = Path(__file__).parent / "template_header.txt"
-        content = template_header.read_text().format(version=version)
+        # Create a new release notes file with a basic template from towncrier_header.txt
+        towncrier_header = Path(__file__).parent.parent / "towncrier_header.txt"
+        content = towncrier_header.read_text().format(version=version)
         release_notes_file.write_text(content)
 
 
