@@ -55,7 +55,9 @@ def release_notes_pyproject_toml(version):
         if not pyproject_file.read_text().endswith("\n"):
             pyproject_file.write_text(pyproject_file.read_text() + "\n")
         # Remind the user to update the release notes file.
-        print(f"\033[33mRemember to update the Release Overview section in the release notes file: {release_notes_file}\033[0m")
+        print(
+            f"\033[33mRemember to update the Release Overview section in the release notes file: {release_notes_file}\033[0m"
+        )
 
 
 def ensure_release_notes_file(version):
