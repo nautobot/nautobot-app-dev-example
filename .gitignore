@@ -296,8 +296,9 @@ fabric.properties
 .vscode/*
 *.code-workspace
 
-# Rando
+# Random
 creds.env
+!development/towncrier_header.txt
 development/*.txt
 
 # Invoke overrides
