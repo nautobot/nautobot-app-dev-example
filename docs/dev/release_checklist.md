@@ -106,9 +106,9 @@ Bumping version from 1.1.0 to 1.1.1
 
 First, create a release branch off of `develop` (`git switch -c release-1.4.2 develop`) and automatically generate release notes with `invoke generate-release-notes`.
 
-If you're releasing a new major or minor version, this will create a new `docs/admin/release_notes/version_{major}.{minor}.md` file. You'll need to update the `Release Overview` section in that file manually and `git add mkdocs.yml pyproject.toml` to stage the changes made to the mkdocs navigation and the towncrier filename configuration.
+If you're releasing a new major or minor version, this will create a new `docs/admin/release_notes/version_{major}.{minor}.md` file. Please fill in the `Release Overview` section in that file manually with a user-friendly summary of the most notable changes!
 
-Stage all the changes (`git add`) and check the diffs to verify all of the changes are correct (`git diff --cached`). For a new release of `1.4.2`, this will update the release notes in `docs/admin/release_notes/version_1.4.md`, stage that file in git, and `git rm` all the fragments that have now been incorporated into the release notes.
+Stage any remaining files (e.g. `git add mkdocs.yml pyproject.toml`) and check the diffs to verify all of the changes are correct (`git diff --cached`). For a new release of `1.4.2`, this will update the release notes in `docs/admin/release_notes/version_1.4.md`, stage that file in git, and `git rm` all the fragments that have now been incorporated into the release notes.
 
 Commit `git commit -m "Release v1.4.2"` and `git push` the staged changes.
 
