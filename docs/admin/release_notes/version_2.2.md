@@ -5,6 +5,15 @@ This document describes all new features and changes in the release. The format 
 ## Release Overview
 
 <!-- towncrier release notes start -->
+## [v2.2.2 (2025-10-15)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v2.2.2)
+
+### Housekeeping
+
+- [#555](https://github.com/nautobot/nautobot-app-dev-example/issues/555) - Added support for `--constrain-python-ver` (accepting X.Y or X.Y.Z) in `invoke lock`.
+- Rebaked from the cookie `nautobot-app-v2.5.1`.
+- Rebaked from the cookie `nautobot-app-v2.6.0`.
+- Updated release process into separate workflow and added support for publishing to Artifactory.
+
 ## [v2.2.1 (2025-09-09)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v2.2.1)
 
 ### Changed

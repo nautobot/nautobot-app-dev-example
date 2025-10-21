@@ -1,1 +1,0 @@
-Added support for `--constrain-python-ver` (accepting X.Y or X.Y.Z) in `invoke lock`.
