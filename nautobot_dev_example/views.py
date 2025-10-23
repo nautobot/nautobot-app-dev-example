@@ -2,6 +2,11 @@
 
 from nautobot.apps.ui import ObjectDetailContent, ObjectFieldsPanel, SectionChoices
 from nautobot.apps.views import NautobotUIViewSet
+<<<<<<< HEAD
+=======
+from nautobot.apps.ui import ObjectDetailContent, ObjectFieldsPanel, ObjectsTablePanel, SectionChoices
+from nautobot.core.templatetags import helpers
+>>>>>>> 2fc35f3 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
 
 # if/when use the table, uncomment the following lines
 # from nautobot.core.templatetags import helpers
@@ -44,11 +49,19 @@ class DevExampleUIViewSet(NautobotUIViewSet):
             # If there is a ForeignKey or M2M with this model we can use ObjectsTablePanel
             # to display them in a table format.
             # ObjectsTablePanel(
+<<<<<<< HEAD
             # weight=200,
             # section=SectionChoices.RIGHT_HALF,
             # table_class=tables.DevExampleTable,
             # You will want to filter the table using the related_name
             # filter="devexamples",
+=======
+                # weight=200,
+                # section=SectionChoices.RIGHT_HALF,
+                # table_class=tables.DevExampleTable,
+                # You will want to filter the table using the related_name
+                # filter="devexamples",
+>>>>>>> 2fc35f3 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
             # ),
         ],
     )

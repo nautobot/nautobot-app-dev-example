@@ -52,9 +52,13 @@ namespace = Collection("nautobot_dev_example")
 namespace.configure(
     {
         "nautobot_dev_example": {
+<<<<<<< HEAD
             "nautobot_ver": "2.4.11",
+=======
+            "nautobot_ver": "2.4.20",
+>>>>>>> 2fc35f3 (Cookie updated by NetworkToCode Cookie Drift Manager Tool)
             "project_name": "nautobot-dev-example",
-            "python_ver": "3.11",
+            "python_ver": "3.12",
             "local": False,
             "compose_dir": os.path.join(os.path.dirname(__file__), "development"),
             "compose_files": [
