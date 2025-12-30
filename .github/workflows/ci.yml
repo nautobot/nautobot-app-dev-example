@@ -146,8 +146,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.11"]
-        nautobot-version: ["2.4.20"]
+        python-version: ["3.10"]
+        nautobot-version: ["3.0.0"]
     env:
       INVOKE_NAUTOBOT_DEV_EXAMPLE_PYTHON_VER: "${{ matrix.python-version }}"
       INVOKE_NAUTOBOT_DEV_EXAMPLE_NAUTOBOT_VER: "${{ matrix.nautobot-version }}"
@@ -192,14 +192,14 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.10"]  # 3.12 stable is tested in unittest_report stage.
+        python-version: ["3.10"]  # 3.13 stable is tested in unittest_report stage.
         db-backend: ["postgresql"]
         nautobot-version: ["stable"]
         include:
-          - python-version: "3.11"
+          - python-version: "3.10"
             db-backend: "postgresql"
-            nautobot-version: "2.4.20"
-          - python-version: "3.12"
+            nautobot-version: "3.0.0"
+          - python-version: "3.13"
             db-backend: "mysql"
             nautobot-version: "stable"
     runs-on: "ubuntu-latest"
@@ -240,14 +240,13 @@ jobs:
         if: "matrix.db-backend == 'mysql'"
       - name: "Run Tests"
         run: "poetry run invoke unittest"
-
   unittest_report:
     needs:
       - "check-in-docker"
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.12"]
+        python-version: ["3.13"]
         db-backend: ["postgresql"]
         nautobot-version: ["stable"]
     runs-on: "ubuntu-latest"
@@ -313,7 +312,6 @@ jobs:
         with:
           name: "python-coverage-comment-action"
           path: "python-coverage-comment-action.txt"
-
   changelog:
     needs: "generate-lockfile"
     if: >
