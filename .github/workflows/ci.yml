@@ -9,6 +9,7 @@ on: # yamllint disable-line rule:truthy rule:comments
       - "main"
       - "develop"
   pull_request: ~
+  workflow_dispatch:
 
 env:
   APP_NAME: "nautobot-dev-example"
