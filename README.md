@@ -28,6 +28,15 @@ More screenshots can be found in the [Using the App](https://docs.nautobot.com/p
 
 ![](https://raw.githubusercontent.com/nautobot/nautobot-app-dev-example/develop/docs/images/placeholder.png)
 
+<!-- pyml disable-num-lines 11 no-inline-html -->
+<div class="grid cards" markdown>
+
+- ![Main Page](media/ss_main_page_light.png#only-light){ .on-glb }
+  ![Main Page](media/ss_main_page_dark.png#only-dark){ .on-glb }
+  [//]: # "`https://demo.nautobot.com/`"
+
+</div>
+
 ## Documentation
 
 Full documentation for this App can be found over on the [Nautobot Docs](https://docs.nautobot.com) website:
