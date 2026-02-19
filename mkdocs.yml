@@ -84,10 +84,10 @@ markdown_extensions:
           class: "mermaid"
           format: !!python/name:pymdownx.superfences.fence_code_format
   - "footnotes"
+  - "meta"
 plugins:
   - "search"
-  - "glightbox":
-      manual: true # See https://blueswen.github.io/mkdocs-glightbox/flexibility/enable-by-image-or-page/
+  - "glightbox"
   - "mkdocstrings":
       default_handler: "python"
       handlers:
