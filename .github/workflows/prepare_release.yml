@@ -102,7 +102,7 @@ jobs:
       - name: "Regenerate poetry.lock"
         run: "poetry lock --regenerate"
 
-      - name: "Generate and Parse Release Notes"
+      - name: "Generate Github Release Notes"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
@@ -110,7 +110,6 @@ jobs:
           TOWNCRIER_NOTES=$(poetry run towncrier build --version "${{ env.NEW_VERSION }}" --date "${{ env.RELEASE_DATE }}" --draft)
 
           # 2. Call GitHub API to generate raw notes
-          # This is the equivalent of your Python 'generate_notes_url' call
           RAW_GH_NOTES=$(gh api /repos/${{ github.repository }}/releases/generate-notes \
             -f tag_name="v${{ env.NEW_VERSION }}" \
             -f target_commitish="${{ github.event.inputs['source_branch'] == 'main' && 'develop' || github.event.inputs['source_branch'] }}" \
@@ -118,7 +117,7 @@ jobs:
 
           # 3. Parse usernames (Regex match)
           # We use grep to find "@user" patterns, sort, and uniq them
-          USERNAMES=$(echo "$RAW_GH_NOTES" | grep -oP 'by @\K[a-zA-Z0-9-]+' | sort -u | grep -vE 'dependabot|nautobot-bot' || true)
+          USERNAMES=$(echo "$RAW_GH_NOTES" | grep -oP 'by @\K[a-zA-Z0-9-]+' | sort -u | grep -vE 'dependabot|nautobot-bot|github-actions' || true)
 
           # 4. Format the Contributors section
           CONTRIBUTORS_SECTION="## Contributors"
@@ -139,7 +138,7 @@ jobs:
           # 7. Save to a temporary file to avoid shell argument length limits
           echo "$FINAL_NOTES" > ../consolidated_notes.md
 
-      - name: "Generate Release Notes"
+      - name: "Generate App Release Notes and update mkdocs.yml"
         run: "poetry run inv generate-release-notes --version '${{ env.NEW_VERSION }}' --date '${{ env.RELEASE_DATE }}'"
 
       - name: "Commit Changes and Push"
