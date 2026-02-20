@@ -223,6 +223,8 @@ Once the release has been published, open a separate PR against `develop` to syn
 
 ### Legacy Documentation for LTM Releases
 
+Please use the automated process for all LTM releases going forward, but if you need to refer to the old manual release process for any reason, here are the steps that were previously followed for LTM releases.
+
 1. Make sure your `ltm-1.6` branch is passing CI.
 2. Create a release branch from the `ltm-1.6` branch: `git switch -c release-1.2.3 ltm-1.6`.
 3. Bump up the patch version `poetry version patch`. If you're backporting a feature instead of bugfixes, bump the minor version instead with `poetry version minor`.
