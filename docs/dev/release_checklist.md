@@ -54,7 +54,7 @@ Ensure that continuous integration testing on the `develop` branch is completing
 
 ### Run the Prepare Release Github Workflow
 
-Run the [Prepare Release](https://github.com/nautobot/nautobot-app-dev-example/actions/workflows/prepare_release.yml) GitHub workflow on the `develop` branch. Select the version bump type (prerelease, patch, minor, major) that matches the version bump you intend to make for this release. Then enter the branch name to create the release from (default is `main`). You can optionally provide the Date of the release (YYYY-MM-DD), if preparing the release ahead of time, otherwise it will default to the current date. Finally, click "Run workflow" to execute the workflow.
+Run the [Prepare Release](https://github.com/nautobot/nautobot-app-dev-example/actions/workflows/prepare_release.yml) GitHub workflow. Leave the "Use workflow from" option set to the default `develop` branch. Select the version bump type (prerelease, patch, minor, major) that matches the version bump you intend to make for this release. Then enter the branch name to create the release from (default is `main`). You can optionally provide the Date of the release (YYYY-MM-DD), if preparing the release ahead of time, otherwise it will default to the current date. Finally, click "Run workflow" button to execute the workflow.
 
 This workflow will automatically create a release branch off of `develop` (If release from `main`, it will use `develop` as the starting point), bump the version, and generate the release notes. It will also open a pull request for you to merge the release branch into `main` (unless another branch is specified) with the generated release notes as the PR description.
 
