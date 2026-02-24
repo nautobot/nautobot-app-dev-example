@@ -145,7 +145,7 @@ jobs:
         run: |
           # Add all changes (pyproject.toml, poetry.lock, etc.)
           git add .
-          git commit -m "chore: prepare release v${{ env.NEW_VERSION }}"
+          git commit -m "prepare release v${{ env.NEW_VERSION }}"
           git push origin "${{ env.RELEASE_BRANCH }}"
 
       - name: "Create Pull Request"
