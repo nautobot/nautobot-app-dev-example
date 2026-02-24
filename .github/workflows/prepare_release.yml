@@ -33,7 +33,7 @@ jobs:
       - name: "Checkout code"
         uses: "actions/checkout@v4"
         with:
-          # If source_branch is 'main', use 'develop' because we cut the release from main, but start with develop. Otherwise, use the input value as with LTM and Next we cut from the same branch.
+          # If target_branch is 'main', use 'develop' as the source branch. Otherwise, the source and target branch are the same.
           ref: "${{ github.event.inputs['source_branch'] == 'main' && 'develop' || github.event.inputs['source_branch'] }}"
           fetch-depth: 0  # Fetch all history for git tags
 
