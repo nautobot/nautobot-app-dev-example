@@ -13,7 +13,7 @@ on: # yamllint disable-line rule:truthy rule:comments
           - "patch"
           - "minor"
           - "major"
-      source_branch:
+      target_branch:
         description: "Create the release from this branch (default: main)."
         required: true
         default: "main"
@@ -34,7 +34,7 @@ jobs:
         uses: "actions/checkout@v4"
         with:
           # If target_branch is 'main', use 'develop' as the source branch. Otherwise, the source and target branch are the same.
-          ref: "${{ github.event.inputs['source_branch'] == 'main' && 'develop' || github.event.inputs['source_branch'] }}"
+          ref: "${{ github.event.inputs['target_branch'] == 'main' && 'develop' || github.event.inputs['target_branch'] }}"
           fetch-depth: 0  # Fetch all history for git tags
 
       - name: "Setup environment"
@@ -46,8 +46,8 @@ jobs:
       - name: "Validate Branch and Tags"
         run: |
           # 1. Verify branch exists
-          if ! git rev-parse --verify origin/${{ github.event.inputs.source_branch }} > /dev/null 2>&1; then
-            echo "Error: Branch ${{ github.event.inputs.source_branch }} does not exist."
+          if ! git rev-parse --verify origin/${{ github.event.inputs.target_branch }} > /dev/null 2>&1; then
+            echo "Error: Branch ${{ github.event.inputs.target_branch }} does not exist."
             exit 1
           fi
 
@@ -112,7 +112,7 @@ jobs:
           # 2. Call GitHub API to generate raw notes
           RAW_GH_NOTES=$(gh api /repos/${{ github.repository }}/releases/generate-notes \
             -f tag_name="v${{ env.NEW_VERSION }}" \
-            -f target_commitish="${{ github.event.inputs['source_branch'] == 'main' && 'develop' || github.event.inputs['source_branch'] }}" \
+            -f target_commitish="${{ github.event.inputs['target_branch'] == 'main' && 'develop' || github.event.inputs['target_branch'] }}" \
             -f previous_tag_name="${{ env.PREVIOUS_TAG }}" --jq '.body')
 
           # 3. Parse usernames (Regex match)
@@ -155,7 +155,7 @@ jobs:
           gh pr create \
             --title "Release v${{ env.NEW_VERSION }}" \
             --body-file "../consolidated_notes.md" \
-            --base "${{ github.event.inputs.source_branch }}" \
+            --base "${{ github.event.inputs.target_branch }}" \
             --head "${{ env.RELEASE_BRANCH }}"
 
       - name: "Create Draft Release"
@@ -164,7 +164,7 @@ jobs:
         run: |
           if [[ "${{ github.event.inputs.bump_rule }}" == "prerelease" ]]; then
             RELEASE_FLAGS="--prerelease"
-          elif [[ "${{ github.event.inputs.source_branch }}" == "main" ]]; then
+          elif [[ "${{ github.event.inputs.target_branch }}" == "main" ]]; then
             RELEASE_FLAGS="--latest"
           else
             RELEASE_FLAGS="--latest=false"
@@ -175,4 +175,4 @@ jobs:
             $RELEASE_FLAGS \
             --title "v${{ env.NEW_VERSION }} - ${{ env.RELEASE_DATE }}" \
             --notes-file "../consolidated_notes.md" \
-            --target "${{ github.event.inputs.source_branch }}"
+            --target "${{ github.event.inputs.target_branch }}"
