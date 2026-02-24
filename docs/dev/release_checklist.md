@@ -64,7 +64,7 @@ Review the release PR created by the workflow, make any necessary adjustments to
 
 ### Publish the Release
 
-A Draft Release will automatically be created in GitHub when the Prepare Release Workflow is run. Verify the content of the release notes, the tag, and the target branch, then publish the release.
+A draft release will automatically be created in GitHub when the Prepare Release workflow is run. Verify the content of the release notes, the tag, and the target branch, then publish the release.
 
 ### Sync the Release Back to `develop`
 
