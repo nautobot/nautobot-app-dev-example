@@ -19,7 +19,6 @@ class NautobotDevExampleConfig(NautobotAppConfig):
     base_url = "dev-example"
     required_settings = []
     default_settings = {}
-    caching_config = {}
     docs_view_name = "plugins:nautobot_dev_example:docs"
     searchable_models = ["devexample"]
 
