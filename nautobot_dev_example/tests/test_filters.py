@@ -6,7 +6,7 @@ from nautobot_dev_example import filters, models
 from nautobot_dev_example.tests import fixtures
 
 
-class DevExampleFilterTestCase(FilterTestCases.FilterTestCase):
+class DevExampleFilterTestCase(FilterTestCases.FilterTestCase):  # pylint: disable=too-many-ancestors
     """DevExample Filter Test Case."""
 
     queryset = models.DevExample.objects.all()
