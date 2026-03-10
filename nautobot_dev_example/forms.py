@@ -31,7 +31,7 @@ class DevExampleBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):  # py
         ]
 
 
-class DevExampleFilterForm(NautobotFilterForm):
+class DevExampleFilterForm(NautobotFilterForm):  # pylint: disable=too-many-ancestors
     """Filter form to filter searches."""
 
     model = models.DevExample
