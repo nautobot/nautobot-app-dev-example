@@ -218,15 +218,6 @@ All done!
 For projects maintaining a Nautobot LTM compatible release, all development and release management is done through the `ltm-x.y` branch. The `x.y` relates to the LTM version of Nautobot it's compatible with, for example `2.4`.
 
 The process is similar to [releasing from `develop`](#all-releases-from-develop), but there is no need for post-release branch syncing because you'll release directly from the LTM branch.
-<<<<<<< HEAD
-
-Once the release has been published, open a separate PR against `develop` to synchronize all LTM release notes into the latest version of the docs for visibility.
-
-### Legacy Documentation for LTM Releases
-
-Please use the automated process for all LTM releases going forward, but if you need to refer to the old manual release process for any reason, here are the steps that were previously followed for LTM releases.
-=======
->>>>>>> d57f0d4 (Cookie updated targeting develop by NetworkToCode Cookie Drift Manager Tool)
 
 Once the release has been published, open a separate PR against `develop` to synchronize all LTM release notes into the latest version of the docs for visibility.
 
