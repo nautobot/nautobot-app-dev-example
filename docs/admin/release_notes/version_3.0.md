@@ -8,6 +8,13 @@ This document describes all new features and changes in the release. The format 
 - Added support for Python 3.13.
 
 <!-- towncrier release notes start -->
+
+## [v3.0.2 (2026-03-19)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.0.2)
+
+### Housekeeping
+
+- Rebaked from the cookie `nautobot-app-v3.1.2`.
+
 ## [v3.0.1 (2026-02-25)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.0.1)
 
 ### Changed
