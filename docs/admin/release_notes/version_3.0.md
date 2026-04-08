@@ -9,6 +9,10 @@ This document describes all new features and changes in the release. The format 
 
 <!-- towncrier release notes start -->
 
+## [v3.0.3 (2026-04-08)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.0.3)
+
+No significant changes.
+
 ## [v3.0.2 (2026-03-19)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.0.2)
 
 ### Housekeeping
