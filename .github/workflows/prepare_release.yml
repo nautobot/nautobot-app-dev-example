@@ -148,7 +148,7 @@ jobs:
           git commit -m "prepare release v${{ env.NEW_VERSION }}"
           git push origin "${{ env.RELEASE_BRANCH }}"
 
-      - name: "Create Pull Request"
+      - name: "Create Pull Request"  # Open as a draft and mark as ready. Workaround to allow PR checks to run
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
@@ -156,7 +156,9 @@ jobs:
             --title "Release v${{ env.NEW_VERSION }}" \
             --body-file "../consolidated_notes.md" \
             --base "${{ github.event.inputs.target_branch }}" \
-            --head "${{ env.RELEASE_BRANCH }}"
+            --head "${{ env.RELEASE_BRANCH }}" \
+            --draft \
+            | xargs -I '{}' gh pr ready {}
 
       - name: "Create Draft Release"
         env:
