@@ -9,6 +9,13 @@ This document describes all new features and changes in the release. The format 
 
 <!-- towncrier release notes start -->
 
+## [v3.0.3 (2026-04-10)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.0.3)
+
+### Housekeeping
+
+- [#149](https://github.com/nautobot/nautobot-app-dev-example/issues/149) - Fixed the sizing of the logo in the footer as well as adjusted it to be inline with the text.
+- Rebaked from the cookie `nautobot-app-v3.1.3`.
+
 ## [v3.0.2 (2026-03-19)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.0.2)
 
 ### Housekeeping
