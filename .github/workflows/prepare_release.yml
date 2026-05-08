@@ -70,7 +70,9 @@ jobs:
         run: |
           # Bump the poetry version based on the user input
           CURRENT_POETRY_VER=$(poetry version --short)
+          set +e  # continue running if the next command fails
           GITHUB_RELEASE_EXISTS=$(gh release view v$CURRENT_POETRY_VER --json publishedAt --jq '.publishedAt')
+          set -e
 
           # Unconditionally bump the version if the current version is alpha0 or beta0
           if [[ $CURRENT_POETRY_VER == *a0 || $CURRENT_POETRY_VER == *b0 ]]; then
