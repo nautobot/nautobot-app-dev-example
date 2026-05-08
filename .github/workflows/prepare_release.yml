@@ -80,7 +80,7 @@ jobs:
 
           # If the bump rule is prerelease and a release doesn't already exist in github we don't bump the version
           # This is because we've already bumped to the prerelease version after the previous release
-          elif [[ "${{ github.event.inputs.bump_rule }}" == "prerelease" && "$CURRENT_POETRY_VER" =~ \\(a|b|rc\\)\\d+\$ && -z "$GITHUB_RELEASE_EXISTS" ]]; then
+          elif [[ "${{ github.event.inputs.bump_rule }}" == "prerelease" && "$CURRENT_POETRY_VER" =~ (a|b|rc)[0-9]+$ && -z "$GITHUB_RELEASE_EXISTS" ]]; then
             echo "Prerelease v$CURRENT_POETRY_VER does not exist in github, using this version"
 
           else
