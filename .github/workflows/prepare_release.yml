@@ -65,6 +65,8 @@ jobs:
 
       - name: "Determine New Version"
         id: "versioning"
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         run: |
           # Bump the poetry version based on the user input
           CURRENT_POETRY_VER=$(poetry version --short)
