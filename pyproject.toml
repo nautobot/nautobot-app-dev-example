@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nautobot-dev-example"
-version = "3.0.4a0"
+version = "3.1.0"
 description = "Nautobot App to demonstrate how to create a Nautobot App."
 authors = ["Network to Code, LLC <opensource@networktocode.com>"]
 license = "Apache-2.0"
@@ -165,7 +165,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.towncrier]
 package = "nautobot_dev_example"
 directory = "changes"
-filename = "docs/admin/release_notes/version_3.0.md"
+filename = "docs/admin/release_notes/version_3.1.md"
 template = "development/towncrier_template.j2"
 start_string = "<!-- towncrier release notes start -->"
 issue_format = "[#{issue}](https://github.com/nautobot/nautobot-app-dev-example/issues/{issue})"
