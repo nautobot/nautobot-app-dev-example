@@ -164,7 +164,7 @@ jobs:
 
       - name: "Create Pull Request"
         env:
-          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GH_TOKEN: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
         run: |
           gh pr create \
             --title "Post release ${{ github.event.release.tag_name }} to ${{ steps.branch.outputs.target_branch }}" \
