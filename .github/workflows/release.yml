@@ -229,3 +229,62 @@ jobs:
             --body "Please do a merge commit." \
             --base "develop" \
             --head "${{ steps.branch.outputs.branch_name }}"
+
+  create-pr-to-next:
+    if: "github.event.release.target_commitish == 'develop'"
+    permissions:
+      contents: "write"
+      pull-requests: "write"
+    name: "Create a PR from develop into next"
+    needs:
+      - "publish-github"
+      - "publish-pypi"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout develop"
+        uses: "actions/checkout@v4"
+        with:
+          ref: "develop"
+          fetch-depth: 0
+
+      - name: "Create release branch from develop"
+        id: "branch"
+        run: |
+
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+          # Skip if there is no 'next' branch to merge into.
+          if ! git ls-remote --exit-code --heads origin next > /dev/null 2>&1; then
+            echo "No 'next' branch exists; skipping develop -> next PR."
+            exit 0
+          fi
+
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          VERSION="${TAG_NAME#v}"
+
+          BRANCH_NAME="release-${VERSION}-to-next"
+
+          # Ensure release branch doesn't already exist
+          if git rev-parse --verify origin/$BRANCH_NAME > /dev/null 2>&1; then
+            echo "Error: Release branch $BRANCH_NAME already exists."
+            exit 1
+          fi
+
+          # Snapshot develop at release time so later develop commits don't alter the PR.
+          # No version bump: next maintains its own (higher) version line.
+          git checkout -b "$BRANCH_NAME"
+          git push origin "$BRANCH_NAME"
+
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: "Create a PR to next"
+        if: "steps.branch.outputs.branch_name != ''"
+        env:
+          GH_TOKEN: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
+        run: |
+          gh pr create \
+            --title "Post release ${{ github.event.release.tag_name }} to next" \
+            --body "Please do a merge commit." \
+            --base "next" \
+            --head "${{ steps.branch.outputs.branch_name }}"

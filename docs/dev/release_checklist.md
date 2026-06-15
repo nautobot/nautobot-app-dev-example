@@ -70,6 +70,15 @@ A draft release will automatically be created in GitHub when the Prepare Release
 
 After a release has been published from the `main` branch, a new PR will automatically be created to merge the changes from `main` back into `develop` with a version bump to the next development version (e.g. `1.4.3a1`). Review and merge this PR once CI has completed and the PR has been approved.
 
+### Sync the Release to `next`
+
+If a `next` branch exists (used to stage the next major or minor version), publishing a release from the `develop` branch will also automatically create a PR to forward-port the released changes from `develop` into `next`, so the `next` branch stays current. Review and merge this PR once CI has completed and the PR has been approved.
+
+!!! important
+    Resolve the `pyproject.toml` version conflict in favor of `next`, which maintains its own version line. As with all release PRs, do not squash merge -- select `Create a merge commit` when merging in GitHub.
+
+If no `next` branch exists, this step is skipped automatically.
+
 ## Legacy Documentation for Releases
 
 Please use the above process for all releases going forward, but if you need to refer to the old manual release process for any reason, here are the steps that were previously followed for releases.
