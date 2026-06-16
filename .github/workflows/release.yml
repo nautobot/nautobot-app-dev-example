@@ -272,7 +272,6 @@ jobs:
           fi
 
           # Snapshot develop at release time so later develop commits don't alter the PR.
-          # No version bump: next maintains its own (higher) version line.
           git checkout -b "$BRANCH_NAME"
           git push origin "$BRANCH_NAME"
 

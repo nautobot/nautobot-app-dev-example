@@ -72,10 +72,7 @@ After a release has been published from the `main` branch, a new PR will automat
 
 ### Sync the Release to `next`
 
-If a `next` branch exists (used to stage the next major or minor version), publishing a release from the `develop` branch will also automatically create a PR to forward-port the released changes from `develop` into `next`, so the `next` branch stays current. Review and merge this PR once CI has completed and the PR has been approved.
-
-!!! important
-    Resolve the `pyproject.toml` version conflict in favor of `next`, which maintains its own version line. As with all release PRs, do not squash merge -- select `Create a merge commit` when merging in GitHub.
+Publishing a release from the `develop` branch will also automatically create a PR to forward-port the released changes from `develop` into `next`, so the `next` branch stays up to date.
 
 If no `next` branch exists, this step is skipped automatically.
 
