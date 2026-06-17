@@ -231,32 +231,28 @@ jobs:
             --head "${{ steps.branch.outputs.branch_name }}"
 
   create-pr-to-next:
-    if: "github.event.release.target_commitish == 'develop'"
+    if: "github.event.release.target_commitish == 'main'"
     permissions:
       contents: "write"
       pull-requests: "write"
-    name: "Create a PR from develop into next"
+    name: "Create a PR from main into next"
     needs:
       - "publish-github"
       - "publish-pypi"
     runs-on: "ubuntu-latest"
     steps:
-      - name: "Checkout develop"
+      - name: "Checkout main"
         uses: "actions/checkout@v4"
         with:
-          ref: "develop"
+          ref: "main"
           fetch-depth: 0
 
-      - name: "Create release branch from develop"
+      - name: "Create release branch from main"
         id: "branch"
         run: |
-
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-
           # Skip if there is no 'next' branch to merge into.
           if ! git ls-remote --exit-code --heads origin next > /dev/null 2>&1; then
-            echo "No 'next' branch exists; skipping develop -> next PR."
+            echo "No 'next' branch exists; skipping main -> next PR."
             exit 0
           fi
 
@@ -271,7 +267,7 @@ jobs:
             exit 1
           fi
 
-          # Snapshot develop at release time so later develop commits don't alter the PR.
+          # Base off main, since it's in the released state.
           git checkout -b "$BRANCH_NAME"
           git push origin "$BRANCH_NAME"
 

@@ -72,7 +72,7 @@ After a release has been published from the `main` branch, a new PR will automat
 
 ### Sync the Release to `next`
 
-Publishing a release from the `develop` branch will also automatically create a PR to forward-port the released changes from `develop` into `next`, so the `next` branch stays up to date.
+Publishing a release from the `main` branch will also automatically create a PR to forward-port the released changes from `main` into `next`, so the `next` branch stays up to date.
 
 If no `next` branch exists, this step is skipped automatically.
 
