@@ -9,6 +9,12 @@ This document describes all new features and changes in the release. The format 
 
 <!-- towncrier release notes start -->
 
+## [v3.1.1 (2026-06-26)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.1.1)
+
+### Housekeeping
+
+- [#172](https://github.com/nautobot/nautobot-app-dev-example/issues/172) - Added a release workflow job that opens a pull request from `main` into `next` after a release is published from `main`.
+
 ## [v3.1.0 (2026-05-15)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.1.0)
 
 ### Added
