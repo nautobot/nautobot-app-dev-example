@@ -875,6 +875,11 @@ def ruff(context, action=None, target=None, fix=False, output_format="concise"):
 def djlint(context, target=None):
     """Run djlint to lint Django templates."""
     if not target:
+        # As of djlint 1.39.5, djlint returns a non-zero exit code when no files match the lint
+        # run (https://github.com/djlint/djLint/issues/1112).
+        if not any(Path("nautobot_dev_example/templates").rglob("*.html")):
+            print("djlint: no Django templates found to lint; skipping.")
+            return
         target = ["."]
 
     command = "djlint --lint "
