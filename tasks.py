@@ -877,10 +877,11 @@ def djlint(context, target=None):
     if not target:
         # As of djlint 1.39.5, djlint returns a non-zero exit code when no files match the lint
         # run (https://github.com/djlint/djLint/issues/1112).
-        if not any(Path("nautobot_dev_example/templates").rglob("*.html")):
+        templates_dir = Path(__file__).parent / "nautobot_dev_example" / "templates"
+        if not any(templates_dir.rglob("*.html")):
             print("djlint: no Django templates found to lint; skipping.")
             return
-        target = ["."]
+        target = ["nautobot_dev_example/templates/"]
 
     command = "djlint --lint "
     command += " ".join(target)
