@@ -888,7 +888,6 @@ def djlint(context, target=None):
     if result.ok:
         return
     if "No files to check" in result.stdout:
-        print("djlint: no files to lint; skipping.")
         return
     print(result.stderr, end="")
     raise Exit(code=result.return_code or 1)
