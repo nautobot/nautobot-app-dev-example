@@ -9,6 +9,13 @@ This document describes all new features and changes in the release. The format 
 
 <!-- towncrier release notes start -->
 
+## [v3.1.2 (2026-07-01)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.1.2)
+
+### Housekeeping
+
+- [#175](https://github.com/nautobot/nautobot-app-dev-example/issues/175) - Changed the release workflow to define the Python and Poetry versions as workflow-level environment variables.
+- [#176](https://github.com/nautobot/nautobot-app-dev-example/issues/176) - Fixed djlint CI failure for apps with no Django templates, caused by djlint 1.39.5 returning a non-zero exit code when no files match the lint run.
+
 ## [v3.1.1 (2026-06-26)](https://github.com/nautobot/nautobot-app-dev-example/releases/tag/v3.1.1)
 
 ### Housekeeping
