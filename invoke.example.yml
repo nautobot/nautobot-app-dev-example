@@ -3,6 +3,7 @@ nautobot_dev_example:
   nautobot_ver: "3.0.0"
   python_ver: "3.12"
   # local: false
+  # ephemeral_ports: false
   # compose_dir: "/full/path/to/nautobot-app-dev-example/development"
 
 # The following is an example of using MySQL as the database backend
