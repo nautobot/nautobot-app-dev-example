@@ -52,9 +52,9 @@ namespace = Collection("nautobot_dev_example")
 namespace.configure(
     {
         "nautobot_dev_example": {
-            "nautobot_ver": "2.3.1",
+            "nautobot_ver": "3.0.0",
             "project_name": "nautobot-dev-example",
-            "python_ver": "3.11",
+            "python_ver": "3.12",
             "local": False,
             "compose_dir": os.path.join(os.path.dirname(__file__), "development"),
             "compose_files": [
@@ -251,19 +251,21 @@ def _get_docker_nautobot_version(context, nautobot_ver=None, python_ver=None):
             "Generally intended to be used in CI and not for local development. (default: disabled)"
         ),
         "constrain_python_ver": (
-            "When using `constrain_nautobot_ver`, further constrain the nautobot version "
-            "to python_ver so that poetry doesn't complain about python version incompatibilities. "
+            "Target Python version to constrain resolution. Accepts X.Y or X.Y.Z. "
+            "Example: --constrain-python-ver=3.9.3 "
+            "This helps avoid poetry complaints about Python incompatibilities. "
             "Generally intended to be used in CI and not for local development. (default: disabled)"
         ),
     }
 )
-def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ver=False):
-    """Generate poetry.lock file."""
+def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ver=""):
+    """Generate poetry.lock; optionally constrain Nautobot and/or Python (with patch)."""
     if constrain_nautobot_ver:
         docker_nautobot_version = _get_docker_nautobot_version(context)
         command = f"poetry add --lock nautobot@{docker_nautobot_version}"
+
         if constrain_python_ver:
-            command += f" --python {context.nautobot_dev_example.python_ver}"
+            command += f" --python {constrain_python_ver}"
         try:
             output = run_command(context, command, hide=True)
             print(output.stdout, end="")
@@ -272,41 +274,65 @@ def lock(context, check=False, constrain_nautobot_ver=False, constrain_python_ve
             print("Unable to add Nautobot dependency with version constraint, falling back to git branch.")
             command = f"poetry add --lock git+https://github.com/nautobot/nautobot.git#{context.nautobot_dev_example.nautobot_ver}"
             if constrain_python_ver:
-                command += f" --python {context.nautobot_dev_example.python_ver}"
+                command += f" --python {constrain_python_ver}"
             run_command(context, command)
     else:
-        command = f"poetry {'check' if check else 'lock --no-update'}"
+        command = f"poetry {'check' if check else 'lock'}"
         run_command(context, command)
 
 
 # ------------------------------------------------------------------------------
 # START / STOP / DEBUG
 # ------------------------------------------------------------------------------
-@task(help={"service": "If specified, only affect this service."})
-def debug(context, service=""):
+@task(
+    help={
+        "service": "If specified, only affect the specified service(s); can be provided multiple times (i.e. -s nautobot -s worker)."
+    },
+    iterable=["service"],
+)
+def debug(context, service=None):
     """Start specified or all services and its dependencies in debug mode."""
-    print(f"Starting {service} in debug mode...")
+    service = " ".join(service) if service else ""
+    print(f"Starting {service or 'all services'} in debug mode...")
     docker_compose(context, "up", service=service)
 
 
-@task(help={"service": "If specified, only affect this service."})
-def start(context, service=""):
-    """Start specified or all services and its dependencies in detached mode."""
-    print("Starting Nautobot in detached mode...")
+@task(
+    help={
+        "service": "If specified, only affect the specified service(s); can be provided multiple times (i.e. -s nautobot -s worker)."
+    },
+    iterable=["service"],
+)
+def start(context, service=None):
+    """Start specified service(s) or all services and its dependencies in detached mode."""
+    service = " ".join(service) if service else ""
+    print(f"Starting {service or 'all services'} in detached mode...")
     docker_compose(context, "up --detach", service=service)
 
 
-@task(help={"service": "If specified, only affect this service."})
-def restart(context, service=""):
+@task(
+    help={
+        "service": "If specified, only affect the specified service(s); can be provided multiple times (i.e. -s nautobot -s worker)."
+    },
+    iterable=["service"],
+)
+def restart(context, service=None):
     """Gracefully restart specified or all services."""
-    print("Restarting Nautobot...")
+    service = " ".join(service) if service else ""
+    print(f"Restarting {service or 'all services'}...")
     docker_compose(context, "restart", service=service)
 
 
-@task(help={"service": "If specified, only affect this service."})
-def stop(context, service=""):
+@task(
+    help={
+        "service": "If specified, only affect the specified service(s); can be provided multiple times (i.e. -s nautobot -s worker)."
+    },
+    iterable=["service"],
+)
+def stop(context, service=None):
     """Stop specified or all services, if service is not specified, remove all containers."""
-    print("Stopping Nautobot...")
+    service = " ".join(service) if service else ""
+    print(f"Stopping {service or 'all services'}...")
     docker_compose(context, "stop" if service else "down --remove-orphans", service=service)
 
 
@@ -380,12 +406,13 @@ def vscode(context):
 
 @task(
     help={
-        "service": "If specified, only display logs for this service (default: all)",
+        "service": "If specified, only display logs for the specified service(s) (default: all); can be provided multiple times (i.e. -s nautobot -s worker)",
         "follow": "Flag to follow logs (default: False)",
         "tail": "Tail N number of lines (default: all)",
-    }
+    },
+    iterable=["service"],
 )
-def logs(context, service="", follow=False, tail=0):
+def logs(context, service=None, follow=False, tail=0):
     """View the logs of a docker compose service."""
     command = "logs "
 
@@ -393,6 +420,7 @@ def logs(context, service="", follow=False, tail=0):
         command += "--follow "
     if tail:
         command += f"--tail={tail} "
+    service = " ".join(service) if service else None
 
     docker_compose(context, command, service=service)
 
@@ -571,7 +599,7 @@ def dbshell(context, db_name="", input_file="", output_file="", query=""):
 def import_db(context, db_name="", input_file="dump.sql"):
     """Stop Nautobot containers and replace the current database with the dump into `db` container."""
     docker_compose(context, "stop -- nautobot worker beat")
-    start(context, "db")
+    start(context, ["db"])
     _await_healthy_service(context, "db")
 
     command = ["exec -- db sh -c '"]
@@ -630,7 +658,7 @@ def import_db(context, db_name="", input_file="dump.sql"):
 )
 def backup_db(context, db_name="", format="", output_file="", readable=True):
     """Dump database into `output_file` file from `db` container."""
-    start(context, "db")
+    start(context, ["db"])
     _await_healthy_service(context, "db")
 
     command = ["exec -- db sh -c '"]
@@ -687,13 +715,16 @@ def backup_db(context, db_name="", format="", output_file="", readable=True):
 @task
 def docs(context):
     """Build and serve docs locally for development."""
-    command = "mkdocs serve -v"
+    # Note: explicitly enabling --livereload was added as a workaround
+    # and can be removed if/when mkdocs is updated.
+    # Ref: https://github.com/mkdocs/mkdocs/issues/4032
+    command = "mkdocs serve -v --livereload"
 
     if is_truthy(context.nautobot_dev_example.local):
         print(">>> Serving Documentation at http://localhost:8001")
         run_command(context, command)
     else:
-        start(context, service="docs")
+        start(context, service=["docs"])
 
 
 @task
@@ -729,15 +760,23 @@ def help_task(context):
 @task(
     help={
         "version": "Version of Nautobot Dev Example App to generate the release notes for.",
+        "date": "Date of the release (default: today).",
+        "keep": "Keep existing release notes files. Useful for testing. (default: False).",
     }
 )
-def generate_release_notes(context, version=""):
+def generate_release_notes(context, version="", date="", keep=False):
     """Generate Release Notes using Towncrier."""
     command = "poetry run towncrier build"
-    if version:
-        command += f" --version {version}"
-    else:
-        command += " --version `poetry version -s`"
+    if not version:
+        version = context.run("poetry version --short", hide=True).stdout.strip()
+    command += f" --version {version}"
+    if date:
+        command += f" --date {date}"
+    command += " --keep" if keep else " --yes"
+
+    version_major_minor = ".".join(version.split(".")[:2])
+    context.run(f"poetry run python development/bin/ensure_release_notes.py --version {version_major_minor}")
+
     # Due to issues with git repo ownership in the containers, this must always run locally.
     context.run(command)
 
@@ -785,11 +824,12 @@ def pylint(context):
 def autoformat(context):
     """Run code autoformatting."""
     ruff(context, action=["format"], fix=True)
+    djhtml(context)
 
 
 @task(
     help={
-        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `['lint', 'format']`)",
+        "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `--action lint --action format`)",
         "target": "File or directory to inspect, repeatable (default: all files in the project will be inspected)",
         "fix": "Automatically fix selected actions. May not be able to fix all issues found. (default: False)",
         "output_format": "See https://docs.astral.sh/ruff/settings/#output-format for details. (default: `concise`)",
@@ -826,6 +866,50 @@ def ruff(context, action=None, target=None, fix=False, output_format="concise"):
         raise Exit(code=exit_code)
 
 
+@task(
+    help={
+        "target": "File or directory to inspect, repeatable (default: all files in the project will be inspected)",
+    },
+    iterable=["target"],
+)
+def djlint(context, target=None):
+    """Run djlint to lint Django templates."""
+    if not target:
+        target = ["."]
+
+    command = "djlint --lint "
+    command += " ".join(target)
+
+    # As of djlint 1.39.5, djlint returns a non-zero exit code when no files match the lint run
+    # (https://github.com/djlint/djLint/issues/1112)
+    result = run_command(context, command, warn=True, hide="both", pty=False)
+    print(result.stdout, end="")
+
+    if result.ok:
+        return
+    if "No files to check" in result.stdout:
+        return
+    print(result.stderr, end="")
+    raise Exit(code=result.return_code or 1)
+
+
+@task(
+    help={
+        "check": "Run djhtml in check mode.",
+    },
+)
+def djhtml(context, check=False):
+    """Run djhtml to format Django HTML templates."""
+    command = "djhtml -t 4 nautobot_dev_example/templates/"
+
+    if check:
+        command += " --check"
+
+    exit_code = 0 if run_command(context, command, warn=True) else 1
+    if exit_code != 0:
+        raise Exit(code=exit_code)
+
+
 @task
 def yamllint(context):
     """Run yamllint to validate formatting adheres to NTC defined YAML standards.
@@ -854,6 +938,17 @@ def check_migrations(context):
     """Check for missing migrations."""
     command = "nautobot-server makemigrations --dry-run --check"
 
+    run_command(context, command)
+
+
+@task
+def generate_test_data(context, flush=False, database=None):
+    """Generate test data in Nautobot for Nautobot Dev Example App."""
+    command = "nautobot-server generate_nautobot_dev_example_test_data"
+    if database:
+        command += f" --database {database}"
+    if flush:
+        command += " --flush"
     run_command(context, command)
 
 
@@ -942,6 +1037,8 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     # Sorted loosely from fastest to slowest
     print("Running ruff...")
     ruff(context)
+    print("Running djlint...")
+    djlint(context)
     print("Running yamllint...")
     yamllint(context)
     print("Running markdownlint...")
@@ -978,14 +1075,14 @@ def generate_app_config_schema(context):
     - `NautobotAppConfig.default_settings`
     - `NautobotAppConfig.required_settings`
     """
-    start(context, service="nautobot")
+    start(context, service=["nautobot"])
     nbshell(context, file="development/app_config_schema.py", env={"APP_CONFIG_SCHEMA_COMMAND": "generate"})
 
 
 @task
 def validate_app_config(context):
     """Validate the app config based on the app config schema."""
-    start(context, service="nautobot")
+    start(context, service=["nautobot"])
     nbshell(context, plain=True, file="development/app_config_schema.py", env={"APP_CONFIG_SCHEMA_COMMAND": "validate"})
 
 
