@@ -1,0 +1,2 @@
+Added the missing 3.0 and 3.1 rows to the compatibility matrix.
+Documented using `invoke check-compatibility-matrix --fix` in the release checklist.
