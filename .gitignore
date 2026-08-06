@@ -308,6 +308,7 @@ invoke.yml
 public
 /compose.yaml
 /dump.sql
+.service_ports.json
 /nautobot_dev_example/static/nautobot_dev_example/docs
 # Avoid accidental commit of analytics template override generated via ./docs/insert-analytics.sh
 docs/assets/overrides/main.html
