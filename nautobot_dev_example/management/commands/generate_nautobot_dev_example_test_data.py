@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 """Generate test data for the Nautobot Dev Example App."""
-=======
-"""Generate test data for the Nautobot Dev Example App app."""
->>>>>>> adad8ab (Cookie updated targeting develop by NetworkToCode Cookie Drift Manager Tool)
 
 from django.core.management.base import BaseCommand
 from django.db import DEFAULT_DB_ALIAS

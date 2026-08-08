@@ -168,11 +168,8 @@ jobs:
 
       - name: "Create Pull Request"
         env:
-<<<<<<< HEAD
-=======
           # To allow actions to run on PR, use Personal Access Token (GH_NAUTOBOT_BOT_TOKEN)
           # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows
->>>>>>> adad8ab (Cookie updated targeting develop by NetworkToCode Cookie Drift Manager Tool)
           GH_TOKEN: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
         run: |
           gh pr create \
@@ -188,12 +185,9 @@ jobs:
       pull-requests: "write"
     name: "Sync release notes from ${{ github.event.release.target_commitish }} to develop"
     runs-on: "ubuntu-latest"
-<<<<<<< HEAD
-=======
     needs:
       - "publish-github"
       - "publish-pypi"
->>>>>>> adad8ab (Cookie updated targeting develop by NetworkToCode Cookie Drift Manager Tool)
     steps:
       - name: "Checkout develop"
         uses: "actions/checkout@v4"
@@ -237,11 +231,7 @@ jobs:
       - name: "Create Pull Request"
         if: "steps.branch.outputs.branch_name != ''"
         env:
-<<<<<<< HEAD
-          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-=======
           GH_TOKEN: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
->>>>>>> adad8ab (Cookie updated targeting develop by NetworkToCode Cookie Drift Manager Tool)
         run: |
           gh pr create \
             --title "Sync release notes from ${{ github.event.release.target_commitish }} (${{ github.event.release.tag_name }}) to develop" \

@@ -147,13 +147,7 @@ def docker_compose(context, command, **kwargs):
         context.nautobot_dev_example.ephemeral_ports
         and context.nautobot_dev_example.compose_files == ORIGINAL_COMPOSE_FILES
     ):
-<<<<<<< HEAD
         compose_file_path = os.path.join(context.nautobot_dev_example.compose_dir, "docker-compose.ephemeral-ports.yml")
-=======
-        compose_file_path = os.path.join(
-            context.nautobot_dev_example.compose_dir, "docker-compose.ephemeral-ports.yml"
-        )
->>>>>>> adad8ab (Cookie updated targeting develop by NetworkToCode Cookie Drift Manager Tool)
         compose_command_tokens.append(f' -f "{compose_file_path}"')
 
     compose_command_tokens.append(command)

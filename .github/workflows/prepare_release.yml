@@ -81,18 +81,6 @@ jobs:
           set +e  # continue running if the next command fails
           GITHUB_RELEASE_EXISTS=$(gh release view v$CURRENT_POETRY_VER --json publishedAt --jq '.publishedAt')
           set -e
-<<<<<<< HEAD
-
-          # Unconditionally bump the version if the current version is alpha0 or beta0
-          if [[ $CURRENT_POETRY_VER == *a0 || $CURRENT_POETRY_VER == *b0 || $CURRENT_POETRY_VER == *rc0 ]]; then
-            poetry version ${{ github.event.inputs.bump_rule }}
-
-          # If the bump rule is prerelease and a release doesn't already exist in github we don't bump the version
-          # This is because we've already bumped to the prerelease version after the previous release
-          elif [[ "${{ github.event.inputs.bump_rule }}" == "prerelease" && "$CURRENT_POETRY_VER" =~ (a|b|rc)[0-9]+$ && -z "$GITHUB_RELEASE_EXISTS" ]]; then
-            echo "Prerelease v$CURRENT_POETRY_VER does not exist in github, using this version"
-
-=======
           # Unconditionally bump the version if the current version is alpha0 or beta0
           if [[ $CURRENT_POETRY_VER == *a0 || $CURRENT_POETRY_VER == *b0 || $CURRENT_POETRY_VER == *rc0 ]]; then
             poetry version ${{ github.event.inputs.bump_rule }}
@@ -101,7 +89,6 @@ jobs:
           # This is because we've already bumped to the prerelease version after the previous release
           elif [[ "${{ github.event.inputs.bump_rule }}" == "prerelease" && "$CURRENT_POETRY_VER" =~ (a|b|rc)[0-9]+$ && -z "$GITHUB_RELEASE_EXISTS" ]]; then
             echo "Prerelease v$CURRENT_POETRY_VER does not exist in github, using this version"
->>>>>>> adad8ab (Cookie updated targeting develop by NetworkToCode Cookie Drift Manager Tool)
           else
             poetry version ${{ github.event.inputs.bump_rule }}
           fi
@@ -187,11 +174,7 @@ jobs:
 
       - name: "Create Pull Request"
         env:
-<<<<<<< HEAD
-          # To allow checks to run on PR, use Personal Access Token (GH_NAUTOBOT_BOT_TOKEN)
-=======
           # To allow actions to run on PR, use Personal Access Token (GH_NAUTOBOT_BOT_TOKEN)
->>>>>>> adad8ab (Cookie updated targeting develop by NetworkToCode Cookie Drift Manager Tool)
           # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows
           GH_TOKEN: "${{ secrets.GH_NAUTOBOT_BOT_TOKEN }}"
         run: |
