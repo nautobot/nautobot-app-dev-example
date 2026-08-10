@@ -61,7 +61,7 @@ namespace = Collection("nautobot_dev_example")
 namespace.configure(
     {
         "nautobot_dev_example": {
-            "nautobot_ver": "3.0.0",
+            "nautobot_ver": "3.1.0",
             "project_name": "nautobot-dev-example",
             "python_ver": "3.12",
             "local": False,
@@ -848,26 +848,46 @@ def hadolint(context):
     run_command(context, command)
 
 
-@task
-def pylint(context):
+@task(
+    help={
+        "target": "Module or file or directory to inspect, repeatable (default: app package)",
+        "recursive": "Must be set if target is a directory rather than a module or file name",
+    },
+    iterable=["target"],
+)
+def pylint(context, target=None, recursive=False):
     """Run pylint code analysis."""
     exit_code = 0
 
     base_pylint_command = 'pylint --verbose --init-hook "import nautobot; nautobot.setup()" --rcfile pyproject.toml'
-    command = f"{base_pylint_command} nautobot_dev_example"
+    command = base_pylint_command
+    if recursive:
+        command += " --recursive=y"
+    command += f" {' '.join(target) if target else 'nautobot_dev_example'}"
     if not run_command(context, command, warn=True):
         exit_code = 1
 
     # run the pylint_django migrations checkers on the migrations directory, if one exists
-    migrations_dir = Path(__file__).absolute().parent / Path("nautobot_dev_example") / Path("migrations")
+    app_dir = Path(__file__).absolute().parent / Path("nautobot_dev_example")
+    migrations_dir = app_dir / Path("migrations")
+    migrations_target_module = "nautobot_dev_example.migrations"
+    run_migrations_check = target is None
+    if target is not None:
+        for target_item in target:
+            target_item_normalized = Path(target_item).resolve()
+            if target_item_normalized in (app_dir, migrations_dir) or target_item == migrations_target_module:
+                run_migrations_check = True
+                break
+
     if migrations_dir.is_dir():
-        migrations_pylint_command = (
-            f"{base_pylint_command} --load-plugins=pylint_django.checkers.migrations"
-            " --disable=all --enable=fatal,new-db-field-with-default,missing-backwards-migration-callable"
-            " nautobot_dev_example.migrations"
-        )
-        if not run_command(context, migrations_pylint_command, warn=True):
-            exit_code = 1
+        if run_migrations_check:
+            migrations_pylint_command = (
+                f"{base_pylint_command} --load-plugins=pylint_django.checkers.migrations"
+                " --disable=all --enable=fatal,new-db-field-with-default,missing-backwards-migration-callable"
+                " nautobot_dev_example.migrations"
+            )
+            if not run_command(context, migrations_pylint_command, warn=True):
+                exit_code = 1
     else:
         print("No migrations directory found, skipping migrations checks.")
 
@@ -887,11 +907,12 @@ def autoformat(context):
         "action": "Available values are `['lint', 'format']`. Can be used multiple times. (default: `--action lint --action format`)",
         "target": "File or directory to inspect, repeatable (default: all files in the project will be inspected)",
         "fix": "Automatically fix selected actions. May not be able to fix all issues found. (default: False)",
+        "diff": "Show diffs of changes. (default: False)",
         "output_format": "See https://docs.astral.sh/ruff/settings/#output-format for details. (default: `concise`)",
     },
     iterable=["action", "target"],
 )
-def ruff(context, action=None, target=None, fix=False, output_format="concise"):
+def ruff(context, action=None, target=None, fix=False, diff=False, output_format="concise"):  # noqa: PLR0913
     """Run ruff to perform code formatting and/or linting."""
     if not action:
         action = ["lint", "format"]
@@ -904,6 +925,8 @@ def ruff(context, action=None, target=None, fix=False, output_format="concise"):
         command = "ruff format "
         if not fix:
             command += "--check "
+            if diff:
+                command += "--diff "
         command += " ".join(target)
         if not run_command(context, command, warn=True):
             exit_code = 1
@@ -912,6 +935,8 @@ def ruff(context, action=None, target=None, fix=False, output_format="concise"):
         command = "ruff check "
         if fix:
             command += "--fix "
+        elif diff:
+            command += "--diff "
         command += f"--output-format {output_format} "
         command += " ".join(target)
         if not run_command(context, command, warn=True):
@@ -1016,6 +1041,7 @@ def generate_test_data(context, flush=False, database=None):
         "pattern": "Run specific test methods, classes, or modules instead of all tests",
         "verbose": "Enable verbose test output.",
         "coverage": "Enable coverage reporting. Defaults to False",
+        "no_input": "Suppress interactive prompts (e.g. confirmation when `--no-reusedb` would destroy an existing test database).",
         "skip_docs_build": "Skip building the documentation before running tests.",
     }
 )
@@ -1028,6 +1054,7 @@ def unittest(  # noqa: PLR0913
     pattern="",
     verbose=False,
     coverage=False,
+    no_input=False,
     skip_docs_build=False,
 ):
     """Run Nautobot unit tests."""
@@ -1048,14 +1075,22 @@ def unittest(  # noqa: PLR0913
         command += f" -k='{pattern}'"
     if verbose:
         command += " --verbosity 2"
+    if no_input:
+        command += " --no-input"
 
     run_command(context, command)
 
 
-@task
-def unittest_coverage(context):
+@task(
+    help={
+        "missing": "Show line numbers of statements in each module that were not executed.",
+    },
+)
+def unittest_coverage(context, missing=False):
     """Report on code test coverage as measured by 'invoke unittest --coverage'."""
     command = "coverage report --skip-covered"
+    if missing:
+        command += " --show-missing"
 
     run_command(context, command)
 
@@ -1080,10 +1115,11 @@ def coverage_xml(context):
     help={
         "failfast": "fail as soon as a single test fails don't run the entire test suite. (default: False)",
         "keepdb": "Save and re-use test database between test runs for faster re-testing. (default: False)",
+        "no_input": "Suppress interactive prompts (e.g. confirmation when `--no-reusedb` would destroy an existing test database). (default: False)",
         "lint-only": "Only run linters; unit tests will be excluded. (default: False)",
     }
 )
-def tests(context, failfast=False, keepdb=False, lint_only=False):
+def tests(context, failfast=False, keepdb=False, no_input=False, lint_only=False):
     """Run all tests for this app."""
     # If we are not running locally, start the docker containers so we don't have to for each test
     if not is_truthy(context.nautobot_dev_example.local):
@@ -1110,7 +1146,7 @@ def tests(context, failfast=False, keepdb=False, lint_only=False):
     validate_app_config(context)
     if not lint_only:
         print("Running unit tests...")
-        unittest(context, failfast=failfast, keepdb=keepdb, coverage=True, skip_docs_build=True)
+        unittest(context, failfast=failfast, keepdb=keepdb, no_input=no_input, coverage=True, skip_docs_build=True)
         unittest_coverage(context)
         coverage_lcov(context)
     print("All tests have passed!")

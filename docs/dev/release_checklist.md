@@ -199,7 +199,7 @@ For example, if you just released `v1.4.2`:
 Switched to a new branch 'release-1.4.2-to-develop'
 
 > poetry version prerelease
-Bumping version from 1.4.2 to 1.4.3a1
+Bumping version from 1.4.2 to 1.4.3a0
 
 > git add pyproject.toml && git commit -m "Bump version"
 

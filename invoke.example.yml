@@ -1,6 +1,6 @@
 ---
 nautobot_dev_example:
-  nautobot_ver: "3.0.0"
+  nautobot_ver: "3.1.0"
   python_ver: "3.12"
   # local: false
   # ephemeral_ports: false
