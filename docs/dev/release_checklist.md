@@ -48,6 +48,46 @@ The goal of this step is to walk through the entire install process *as document
 
 ## All Releases from `develop`
 
+### Release Process Diagram
+
+This diagram illustrates the release process workflow using GitHub Actions.
+
+```mermaid
+flowchart TD
+    A(branch:
+    develop) --> I{Trigger GitHub Action}
+    I --> B[/github workflow:
+    Prepare Release /]
+    B --> C[Pull Request:
+    Cookie updated targeting main by NetworkToCode Cookie Drift Manager Tool]
+    B --> E[Draft Release]
+    C --> J{Approve, Merge PR}
+    J --> D(branch:
+    main)
+    D --> E[Draft Release]
+    E --> K{Publish Release}
+    K --> F[/github workflow:
+    Release/] 
+    F --> H[Release published 
+    YAY!]
+    F --> G[Pull Request:
+    Post Release vX.Y.Z to develop]
+    G --> L{Approve, Merge PR}
+    L -->A
+
+    click B "https://github.com/nautobot/nautobot-app-dev-example/actions/workflows/prepare_release.yml" _blank
+    click F "https://github.com/nautobot/nautobot-app-dev-example/actions/workflows/release.yml" _blank
+```
+
+#### Diagram Legend
+
+| Shape | Element Type | Description |
+|-------------|--------------|-------------|
+| `[text]` | **Process Step** | Rectangle for Pull Requests and Releases |
+| `[/text/]` | **Subprocess** | Parallelogram for Github Action |
+| `(text)` | **Terminal/Start/End** | Rounded rectangle for Git branches |
+| `{text}` | **Decision Point** | Diamond shape for manual interactions |
+
 ### Verify CI Build Status
 
 Ensure that continuous integration testing on the `develop` branch is completing successfully.
