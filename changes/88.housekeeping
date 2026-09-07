@@ -1,0 +1,2 @@
+Added a new invoke command to check the accuracy of the Compatibility Matrix documentation file and optionally fix it automatically.
+Added a CI job to enforce that the compatibility matrix is up to date.
