@@ -470,6 +470,16 @@ To run an individual test, you can run any or all of the following:
 ➜ invoke pylint
 ```
 
+### Browser Tests and Screenshots
+
+#### Keeping the Debug Toolbar Out of the Way
+
+When `NAUTOBOT_DEBUG` is on, the development server injects [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/). Its floating handle sits on top of the page: it intercepts clicks meant for the app and it shows up in every screenshot. The development configuration (`development/nautobot_config.py`) gives you two ways to turn it off:
+
+- **Per request.** An HTTP request that carries the `X-Disable-Debug-Toolbar` header gets a page with no toolbar. You can use this with any client (e.g. Playwright, curl, load tests) fetching Nautobot pages.
+
+- **For the whole server.** Set `NAUTOBOT_SHOW_DJDT_TOOLBAR` to a falsy value (`false`, `0`) in `development/development.env` and restart the `nautobot` service. The toolbar stays off for every request until you enable it again (or comment it out, as the default is enabled).
+
 ### App Configuration Schema
 
 In the package source, there is the `nautobot_dev_example/app-config-schema.json` file, conforming to the [JSON Schema](https://json-schema.org/) format. This file is used to validate the configuration of the app in CI pipelines.
