@@ -14,17 +14,17 @@ Documentation is built using [mkdocs](https://www.mkdocs.org/). The [Docker base
 
 ## Creating Changelog Fragments
 
-All pull requests to `next` or `develop` must include a changelog fragment file in the `./changes` directory. To create a fragment, use your GitHub issue number and fragment type as the filename. For example, `2362.added`. Valid fragment types are `added`, `changed`, `deprecated`, `fixed`, `removed`, `security`, `breaking`, `dependencies`, `documentation` and `housekeeping`. The change summary is added to the file in Markdown format. Change summaries should be complete sentences, starting with a capital letter and ending with a period, and be in past tense. Remember that these change summaries will appear in the release notes, so keep them concise and targeted to the relevant audience (end users, maintainers, etc.). Each line of the change fragment will generate a single change entry in the release notes. Use multiple lines in the same file if your change needs to generate multiple release notes in the same category. If the change needs to create multiple entries in separate categories, create multiple files.
+All pull requests to `next` or `develop` must include a changelog fragment file in the `./changes` directory. To create a fragment, use your GitHub issue number and fragment type as the filename. For example, `2362.added.md`. Valid fragment types are `added`, `changed`, `deprecated`, `fixed`, `removed`, `security`, `breaking`, `dependencies`, `documentation` and `housekeeping`. The change summary is added to the file in Markdown format. Change summaries should be complete sentences, starting with a capital letter and ending with a period, and be in past tense. Remember that these change summaries will appear in the release notes, so keep them concise and targeted to the relevant audience (end users, maintainers, etc.). Each line of the change fragment will generate a single change entry in the release notes. Use multiple lines in the same file if your change needs to generate multiple release notes in the same category. If the change needs to create multiple entries in separate categories, create multiple files.
 
 !!! example
 
     **Wrong**
-    ```markdown title="changes/1234.fixed"
+    ```markdown title="changes/1234.fixed.md"
     fix critical bug in object list
     ```
 
     **Right**
-    ```markdown title="changes/1234.fixed"
+    ```markdown title="changes/1234.fixed.md"
     Fixed an `IntegrityError` exception when listing objects in the UI as a superuser.
     ```
 
@@ -32,12 +32,12 @@ All pull requests to `next` or `develop` must include a changelog fragment file 
 
     This will generate 2 entries in the `fixed` category and one entry in the `housekeeping` category.
 
-    ```markdown title="changes/1234.fixed"
+    ```markdown title="changes/1234.fixed.md"
     Fixed a critical bug in feature XYZ in which...
     Fixed an unhandled `RuntimeError` exception when...
     ```
 
-    ```markdown title="changes/1234.changed"
+    ```markdown title="changes/1234.changed.md"
     Changed release notes generation.
     ```
 
