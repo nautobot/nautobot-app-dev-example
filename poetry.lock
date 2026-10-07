@@ -4418,4 +4418,4 @@ all = []
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.15"
-content-hash = "21c1f2c9c06965d162ed38b2019f581934cd8936869ec7af12c4cc8bbf0fb28b"
+content-hash = "4109307d8eb0e8020209519218565e6a2b56bcf9a5ed49e283b673b502f6f08f"
