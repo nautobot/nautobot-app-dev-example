@@ -46,7 +46,7 @@ yamllint = "*"
 # Python implementation of markdownlint
 pymarkdownlnt = "~0.9.30"
 Markdown = "*"
-towncrier = "~26.9.0"
+towncrier = ">=26.9.0,<26.10.0"
 to-json-schema = "*"
 jsonschema = "*"
 djlint = ">=1.36.4,<2.0.0"
