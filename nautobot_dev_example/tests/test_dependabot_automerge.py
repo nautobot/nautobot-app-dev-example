@@ -5,8 +5,12 @@ import subprocess
 from pathlib import Path
 from unittest import TestCase
 
-import tomllib
 import yaml
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python < 3.11
+    import tomli as tomllib
 
 # These files are not part of the built image; the test needs the repository bind-mounted (e.g. `../:/source`).
 REPO_ROOT = Path(__file__).resolve().parents[2]
