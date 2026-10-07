@@ -1,0 +1,2 @@
+Fixed dependabot automerge using poetry show --with playwright.
+Fixed the dependabot automerge unittest so that it will fail when trying to use a group that is not declared in pyproject.toml.
