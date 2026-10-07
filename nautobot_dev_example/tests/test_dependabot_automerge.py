@@ -25,6 +25,23 @@ def _optional_groups():
     return {name for name, config in groups.items() if config.get("optional") is True}
 
 
+def _normalize(name):
+    """Normalize a group name the way Poetry does (`packaging.utils.canonicalize_name`)."""
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def _declared_groups():
+    """Return the normalized names of all dependency groups in pyproject.toml.
+
+    Includes PEP 735 `[dependency-groups]` and Poetry's `[tool.poetry.group.<name>]` tables.
+    """
+    with PYPROJECT.open("rb") as handle:
+        pyproject = tomllib.load(handle)
+    names = set(pyproject.get("dependency-groups", {}))
+    names.update(pyproject.get("tool", {}).get("poetry", {}).get("group", {}))
+    return {_normalize(name) for name in names}
+
+
 def _workflow_with_groups():
     """Return the groups passed via `--with` to `poetry show --top-level` in the workflow."""
     with WORKFLOW.open(encoding="utf-8") as handle:
@@ -76,6 +93,11 @@ class DependabotAutomergeTest(TestCase):
             with_groups,
             f"Optional groups missing from `--with` in {WORKFLOW.name}: {sorted(optional - with_groups)}",
         )
+
+    def test_workflow_groups_exist(self):
+        """Every group passed via `--with` must be declared in pyproject.toml, or `poetry show` fails."""
+        unknown = {_normalize(name) for name in _workflow_with_groups()} - _declared_groups()
+        self.assertFalse(unknown, f"`--with` groups in {WORKFLOW.name} not found in pyproject.toml: {sorted(unknown)}")
 
     def test_title_pattern(self):
         """The workflow's title pattern matches single-dependency bumps and rejects grouped updates."""
