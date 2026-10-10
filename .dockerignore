@@ -10,6 +10,8 @@ environments/
 **/*.pyo
 **/__pycache__/
 **/.pytest_cache/
+test-results/
+screenshots/
 **/.venv/
 
 

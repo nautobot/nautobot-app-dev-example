@@ -62,6 +62,9 @@ namespace.configure(
     {
         "nautobot_dev_example": {
             "nautobot_ver": "3.1.0",
+            # Nautobot installed in the playwright image, for nautobot.playwright (3.3 or later).
+            # It does not have to match nautobot_ver: the stack can run an older release while this is next.
+            "playwright_nautobot_ver": "next",
             "project_name": "nautobot-dev-example",
             "python_ver": "3.12",
             "local": False,
@@ -116,6 +119,20 @@ def task(function=None, *args, **kwargs):
     return task_wrapper
 
 
+def _locked_version(package):
+    """Return the exact version poetry.lock pins for *package*, or "" before the lock exists or lists it.
+
+    Images build what the lock installs. An empty value lets every other task run on a fresh app
+    with no lock yet; the `playwright` task refuses to start without it.
+    """
+    lock_path = os.path.join(os.path.dirname(__file__), "poetry.lock")
+    if not os.path.isfile(lock_path):
+        return ""
+    with open(lock_path, encoding="utf-8") as lock_file:
+        match = re.search(rf'^name = "{re.escape(package)}"\nversion = "([^"]+)"', lock_file.read(), flags=re.MULTILINE)
+    return match.group(1) if match else ""
+
+
 def docker_compose(context, command, **kwargs):
     """Helper function for running a specific docker compose command with all appropriate parameters and environment.
 
@@ -131,6 +148,12 @@ def docker_compose(context, command, **kwargs):
         "COMPOSE_HTTP_TIMEOUT": context.nautobot_dev_example.compose_http_timeout,
         "NAUTOBOT_VER": context.nautobot_dev_example.nautobot_ver,
         "PYTHON_VER": context.nautobot_dev_example.python_ver,
+        # Dockerfile-playwright pins: the image tag and every pip install come from the lock, so the
+        # container and a `local: true` run test with the same versions.
+        "PLAYWRIGHT_NAUTOBOT_VER": context.nautobot_dev_example.playwright_nautobot_ver,
+        "PLAYWRIGHT_VER": _locked_version("playwright"),
+        "PYTEST_VER": _locked_version("pytest"),
+        "PYTEST_PLAYWRIGHT_VER": _locked_version("pytest-playwright"),
         **kwargs.pop("env", {}),
     }
     compose_command_tokens = [
@@ -162,6 +185,77 @@ def docker_compose(context, command, **kwargs):
     compose_command = " ".join(compose_command_tokens)
 
     return context.run(compose_command, env=build_env, **kwargs)
+
+
+@task(
+    help={
+        "url": "Base URL of the Nautobot instance under test (default: NAUTOBOT_PLAYWRIGHT_URL; the compose stack sets it to http://nautobot:8080).",
+        "username": "Login username for the instance under test (default: NAUTOBOT_PLAYWRIGHT_USERNAME, or admin).",
+        "password": "Login password for the instance under test (default: NAUTOBOT_PLAYWRIGHT_PASSWORD, or admin).",
+        "token": "REST API token for the instance under test (default: NAUTOBOT_PLAYWRIGHT_API_TOKEN, or the dev token).",
+        "headed": "Run the browser headed (visible). Needs a display, so it requires `local: true`.",
+        "pattern": "Only run tests whose names match the given substring (pytest -k).",
+        "show_output": "Show print output from the tests (pytest -s). On by default for --look and --scratch.",
+        "scratch": "Instead of the suite, run the throwaway tests in nautobot_dev_example/tests/scratch/ (gitignored). Combine with --pattern to pick one.",
+        "look": "Instead of the suite, open this path (for example /dcim/devices/) and print a report of it: status, title, headings, console and request problems, visible text, and a screenshot under screenshots/.",
+        "marker": "Only run tests carrying the given pytest mark (pytest -m), e.g. behavioral or 'not behavioral'.",
+    }
+)
+def playwright(  # noqa: PLR0913,PLR0917
+    context,
+    url=None,
+    username=None,
+    password=None,
+    token=None,
+    headed=False,
+    pattern=None,
+    marker=None,
+    look=None,
+    scratch=False,
+    show_output=False,
+):
+    """Run the Playwright tests against a running Nautobot instance, or report on one page with --look.
+
+    Runs in the `playwright` container by default, and on the host when `local` is true in
+    invoke.yml. The host needs `poetry install --with playwright` and
+    `poetry run playwright install chromium`, and is the only place headed mode works.
+    The process running pytest needs nautobot.playwright (Nautobot 3.3 or later). The container
+    installs it from `playwright_nautobot_ver`. The instance under test does not need it.
+    """
+    if not _locked_version("playwright"):
+        raise Exit("poetry.lock does not list playwright. Run `poetry lock` first.", code=1)
+    local = is_truthy(context.nautobot_dev_example.local)
+    if headed and not local:
+        raise Exit(
+            "--headed needs a display, which the container does not have. Set `local: true` in invoke.yml.", code=1
+        )
+    # Traces and screenshots are kept only for failing tests, under test-results/.
+    command = "pytest -p playwright -p base_url --tracing=retain-on-failure --screenshot=only-on-failure"
+    if headed:
+        command += " --headed"
+    # Double quotes survive both paths: the host shell strips them, compose splits on them
+    # inside the single-quoted --entrypoint string.
+    if pattern:
+        command += f' -k="{pattern}"'
+    if marker:
+        command += f' -m="{marker}"'
+    # Auto-loading is off so that only the plugins named above load, whatever else the
+    # environment happens to have installed.
+    command_env = {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
+    if show_output or look or scratch:
+        command += " -s"
+    # Both directories sit outside pytest's testpaths, so only these explicit paths reach them.
+    if look:
+        command += " nautobot_dev_example/tests/look"
+        if "://" in look:
+            raise Exit("--look takes a path such as /dcim/devices/; pass the host with --url.", code=1)
+        command_env["NAUTOBOT_PLAYWRIGHT_LOOK"] = look if look.startswith("/") else f"/{look}"
+    if scratch:
+        command += " nautobot_dev_example/tests/scratch"
+    for suffix, value in (("URL", url), ("USERNAME", username), ("PASSWORD", password), ("API_TOKEN", token)):
+        if value:
+            command_env[f"NAUTOBOT_PLAYWRIGHT_{suffix}"] = value
+    run_command(context, command, service="playwright", command_env=command_env, pty=True)
 
 
 @task
@@ -217,11 +311,14 @@ def run_command(context, command, service="nautobot", **kwargs):
         docker_compose_status = "ps --services --filter status=running"
         results = docker_compose(context, docker_compose_status, hide="out")
 
+        # Forward each variable by name and hand the values to compose through the process
+        # environment, so the echoed command never shows a value (passwords and tokens included).
         command_env_args = ""
         if "command_env" in kwargs:
             command_env = kwargs.pop("command_env")
-            for key, value in command_env.items():
-                command_env_args += f' --env="{key}={value}"'
+            kwargs["env"] = {**kwargs.get("env", {}), **command_env}
+            for key in command_env:
+                command_env_args += f' --env="{key}"'
 
         if service in results.stdout:
             compose_command = f"exec{command_env_args} {service} {command}"
@@ -240,9 +337,10 @@ def run_command(context, command, service="nautobot", **kwargs):
     help={
         "force_rm": "Always remove intermediate containers",
         "cache": "Whether to use Docker's cache when building the image (defaults to enabled)",
+        "playwright": "Build the playwright image instead. It sits behind a compose profile, so a plain build skips it.",
     }
 )
-def build(context, force_rm=False, cache=True):
+def build(context, force_rm=False, cache=True, playwright=False):
     """Build Nautobot docker image."""
     command = "build"
 
@@ -250,6 +348,13 @@ def build(context, force_rm=False, cache=True):
         command += " --no-cache"
     if force_rm:
         command += " --force-rm"
+
+    if playwright:
+        # `compose run` only builds this image when its tag is missing, and the tag does not change
+        # when Dockerfile-playwright is edited or `next` moves, so a rebuild needs an explicit path.
+        print(f"Building the playwright image with Nautobot {context.nautobot_dev_example.playwright_nautobot_ver}...")
+        docker_compose(context, f"--profile playwright {command} playwright")
+        return
 
     print(f"Building Nautobot with Python {context.nautobot_dev_example.python_ver}...")
     docker_compose(context, command)
