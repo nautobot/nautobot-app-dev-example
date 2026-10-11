@@ -132,6 +132,7 @@ Each command can be executed with `invoke <command>`. All commands support the a
   unittest         Run Django unit tests for the app.
   djlint           Run djlint to perform django template linting.
   djhtml           Run djhtml to perform django template formatting.
+  playwright       Run the Playwright tests against a running Nautobot instance.
 ```
 
 ## Project Overview
@@ -479,6 +480,12 @@ When `NAUTOBOT_DEBUG` is enabled, the development server adds [django-debug-tool
 - **Per request**: Add the `X-Disable-Debug-Toolbar` header to the request. The response will be rendered without the toolbar. This works with any client (Playwright, curl, load-testing tools).
 
 - **For the whole server**: Set `NAUTOBOT_SHOW_DJDT_TOOLBAR` to a falsy value (`false`, `0`) in `development/development.env`, then restart the `nautobot` service. This disables the toolbar for all requests. Comment out the setting to restore the default behavior, which is enabled.
+
+### Browser Tests and Screenshots
+
+The Playwright suite in `nautobot_dev_example/tests/integration/` drives a real browser against the
+development stack. [Running the Playwright Tests](playwright.md) covers how to run it, and the
+`testing-nautobot-ui` skill shows how to take a screenshot with it.
 
 ### App Configuration Schema
 
