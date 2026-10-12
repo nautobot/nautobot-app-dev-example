@@ -352,7 +352,8 @@ def build(context, force_rm=False, cache=True, playwright=False):
     if playwright:
         # `compose run` only builds this image when its tag is missing, and the tag does not change
         # when Dockerfile-playwright is edited or `next` moves, so a rebuild needs an explicit path.
-        print(f"Building the playwright image with Nautobot {context.nautobot_dev_example.playwright_nautobot_ver}...")
+        version = context.nautobot_dev_example.playwright_nautobot_ver
+        print(f"Building the playwright image with Nautobot {version}...")
         docker_compose(context, f"--profile playwright {command} playwright")
         return
 
