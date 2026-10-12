@@ -132,6 +132,7 @@ Each command can be executed with `invoke <command>`. All commands support the a
   unittest         Run Django unit tests for the app.
   djlint           Run djlint to perform django template linting.
   djhtml           Run djhtml to perform django template formatting.
+  playwright       Run the Playwright tests against a running Nautobot instance.
 ```
 
 ## Project Overview
@@ -471,6 +472,10 @@ To run an individual test, you can run any or all of the following:
 ```
 
 ### Browser Tests and Screenshots
+
+The Playwright suite in `nautobot_dev_example/tests/integration/` drives a real browser against the
+development stack. [Running the Playwright Tests](playwright.md) covers how to run it, and the
+`testing-nautobot-ui` skill shows how to take a screenshot with it.
 
 #### Keeping the Debug Toolbar Out of the Way
 

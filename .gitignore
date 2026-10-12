@@ -338,3 +338,8 @@ GEMINI.md
 .ollama/
 # https://github.com/kirodotdev/Kiro
 .kiro/
+
+# Playwright traces and screenshots for failed tests (invoke playwright)
+test-results/
+# Screenshots from invoke playwright --look and scratch tests
+screenshots/
