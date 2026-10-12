@@ -473,6 +473,10 @@ To run an individual test, you can run any or all of the following:
 
 ### Browser Tests and Screenshots
 
+The Playwright suite in `nautobot_dev_example/tests/integration/` drives a real browser against the
+development stack. [Running the Playwright Tests](playwright.md) covers how to run it, and the
+`testing-nautobot-ui` skill shows how to take a screenshot with it.
+
 #### Keeping the Debug Toolbar Out of the Way
 
 When `NAUTOBOT_DEBUG` is enabled, the development server adds [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/). Its floating handle sits on top of the page, which can interfere with clicks and shows up in screenshots. The development config (`development/nautobot_config.py`) provides two ways to disable the toolbar:
@@ -480,12 +484,6 @@ When `NAUTOBOT_DEBUG` is enabled, the development server adds [django-debug-tool
 - **Per request**: Add the `X-Disable-Debug-Toolbar` header to the request. The response will be rendered without the toolbar. This works with any client (Playwright, curl, load-testing tools).
 
 - **For the whole server**: Set `NAUTOBOT_SHOW_DJDT_TOOLBAR` to a falsy value (`false`, `0`) in `development/development.env`, then restart the `nautobot` service. This disables the toolbar for all requests. Comment out the setting to restore the default behavior, which is enabled.
-
-### Browser Tests and Screenshots
-
-The Playwright suite in `nautobot_dev_example/tests/integration/` drives a real browser against the
-development stack. [Running the Playwright Tests](playwright.md) covers how to run it, and the
-`testing-nautobot-ui` skill shows how to take a screenshot with it.
 
 ### App Configuration Schema
 
