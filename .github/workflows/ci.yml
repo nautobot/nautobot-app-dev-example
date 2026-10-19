@@ -13,7 +13,7 @@ on:  # yamllint disable-line rule:truthy rule:comments
 
 jobs:
   ci:
-    uses: "networktocode/github-reusable-workflows/.github/workflows/ntc-ci.yml@v1"
+    uses: "networktocode/github-reusable-workflows/.github/workflows/ntc-ci.yml@main"
     permissions:
       contents: "write"
       pull-requests: "write"
