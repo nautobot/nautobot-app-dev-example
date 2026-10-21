@@ -1144,6 +1144,8 @@ def tests(context, failfast=False, keepdb=False, no_input=False, lint_only=False
     build_and_check_docs(context)
     print("Checking app config schema...")
     validate_app_config(context)
+    print("Checking Compatibility Matrix...")
+    check_compatibility_matrix(context)
     if not lint_only:
         print("Running unit tests...")
         unittest(context, failfast=failfast, keepdb=keepdb, no_input=no_input, coverage=True, skip_docs_build=True)
@@ -1173,3 +1175,101 @@ def validate_app_config(context):
     """Validate the app config based on the app config schema."""
     start(context, service=["nautobot"])
     nbshell(context, plain=True, file="development/app_config_schema.py", env={"APP_CONFIG_SCHEMA_COMMAND": "validate"})
+
+
+def parse_poetry_version_constraint(constraint):
+    """Parse a Poetry version constraint into (min_version, max_version) display strings.
+
+    Supports `>=X.Y.Z,<A.B.C` ranges, `^X.Y.Z`, and exact pins; raises on anything else.
+    Exclusive upper bounds display as `.99` versions, e.g. `<4.0.0` becomes `3.99.99`.
+    """
+
+    def parts_of(version):
+        # Pad to three parts, e.g. "2.1" -> [2, 1, 0]
+        numbers = [int(x) for x in version.split(".")]
+        return numbers + [0] * (3 - len(numbers))
+
+    def display(version):
+        return "{}.{}.{}".format(*parts_of(version))
+
+    constraint = constraint.strip()
+    error = Exit(
+        f'Unsupported nautobot version constraint "{constraint}" in pyproject.toml. '
+        'Supported forms: ">=X.Y.Z,<A.B.C", "^X.Y.Z", "==X.Y.Z".'
+    )
+    if constraint.startswith("^"):
+        major = parts_of(constraint[1:])[0]
+        if major == 0:
+            raise error
+        return display(constraint[1:]), f"{major}.99.99"
+    if match := re.fullmatch(r"(?:==)?\s*([0-9.]+)", constraint):
+        return display(match[1]), display(match[1])
+    min_v = max_v = None
+    for bound in constraint.split(","):
+        bound = bound.strip()
+        if match := re.fullmatch(r">=\s*([0-9.]+)", bound):
+            min_v = display(match[1])
+        elif match := re.fullmatch(r"<=\s*([0-9.]+)", bound):
+            max_v = display(match[1])
+        elif match := re.fullmatch(r"<\s*([0-9.]+)", bound):
+            major, minor, _ = parts_of(match[1])
+            max_v = f"{major - 1}.99.99" if minor == 0 else f"{major}.{minor - 1}.99"
+        else:
+            raise error
+    # The matrix needs both a first and last supported version
+    if min_v is None or max_v is None:
+        raise error
+    return min_v, max_v
+
+
+@task(
+    help={
+        "fix": "Automatically fix issues found in the compatibility matrix. (default: False)",
+    }
+)
+def check_compatibility_matrix(context, fix=False):  # pylint: disable=unused-argument
+    """Check the compatibility matrix covers the current app and Nautobot versions."""
+    base = Path(__file__).parent
+    matrix_path = base / "docs" / "admin" / "compatibility_matrix.md"
+    pyproject_path = base / "pyproject.toml"
+    for path in (matrix_path, pyproject_path):
+        if not path.exists():
+            raise Exit(f"File not found: {path}")
+
+    pyproject = pyproject_path.read_text()
+    app_version_match = re.search(r'^version = "(.+)"', pyproject, re.MULTILINE)
+    if not app_version_match:
+        raise Exit("App version not found in the pyproject.toml file.")
+    nautobot_match = re.search(r'^nautobot\s*=\s*(?:"(.+?)"|\{.*?version\s*=\s*"(.+?)")', pyproject, re.MULTILINE)
+    if not nautobot_match:
+        raise Exit("Nautobot version not found in the pyproject.toml file.")
+    nautobot_min, nautobot_max = parse_poetry_version_constraint(nautobot_match[1] or nautobot_match[2])
+
+    lines = matrix_path.read_text().splitlines(keepends=True)
+    last_index = next((i for i in range(len(lines) - 1, -1, -1) if lines[i].startswith("| ")), None)
+    if last_index is None:
+        raise Exit("No compatibility matrix table found in the file.")
+    cells = [cell.strip() for cell in lines[last_index].strip().strip("|").split("|")]
+
+    current_row = ".".join(app_version_match[1].split(".")[:2]) + ".X"
+    expected_line = f"| {current_row} | {nautobot_min} | {nautobot_max} |\n"
+    fix_hint = "Run `invoke check-compatibility-matrix --fix` to update docs/admin/compatibility_matrix.md."
+
+    if cells[0].upper() != current_row:
+        if not fix:
+            raise Exit(f"Compatibility matrix has no row for app version {current_row}. {fix_hint}")
+        print(f"Adding compatibility matrix row for app version {current_row}...")
+        if not lines[last_index].endswith("\n"):
+            lines[last_index] += "\n"
+        lines.insert(last_index + 1, expected_line)
+    elif cells[1:3] != [nautobot_min, nautobot_max]:
+        if not fix:
+            raise Exit(
+                f"Compatibility matrix row for {current_row} does not match the supported Nautobot versions "
+                f"{nautobot_min} - {nautobot_max}. {fix_hint}"
+            )
+        print(f"Updating compatibility matrix row for app version {current_row}...")
+        lines[last_index] = expected_line
+
+    if fix:
+        matrix_path.write_text("".join(lines))
