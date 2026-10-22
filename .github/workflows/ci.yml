@@ -24,7 +24,6 @@ jobs:
       changelog_base_branches: >-
         ["develop", "ltm-1.6"]
       # Optional overrides (defaults shown):
-      # invoke_context_name: "NAUTOBOT_DEV_EXAMPLE"
       # min_python_version: "3.10"
       # max_python_version: "3.14"
       # poetry_version: "2.1.3"
